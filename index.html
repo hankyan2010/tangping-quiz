@@ -11,7 +11,7 @@
 html{overflow-x:hidden;overscroll-behavior:none}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  background:var(--bg);color:var(--title);min-height:100vh;padding-bottom:64px;
+  background:var(--bg);color:var(--title);min-height:100vh;padding-top:64px;
 }
 ::-webkit-scrollbar{display:none}
 .shell{max-width:480px;margin:0 auto;padding:16px 16px 80px}
@@ -76,13 +76,14 @@ body{
 .btn-raised-yellow:active{top:4px;box-shadow:0 1px 0 #A07E00}
 
 .ad-bar{
-  position:fixed;bottom:0;left:0;right:0;height:56px;
-  background:rgba(255,209,0,.92);backdrop-filter:blur(6px);
-  border-top:2px solid rgba(0,0,0,.06);
+  position:fixed;top:0;left:0;right:0;min-height:56px;
+  background:rgba(255,252,240,.96);backdrop-filter:blur(6px);
+  border-bottom:1px solid rgba(0,0,0,.06);
   display:flex;align-items:center;justify-content:center;z-index:50;
+  overflow:hidden;
 }
-.ad-ph{color:rgba(0,0,0,.25);font-size:12px;letter-spacing:2px;font-weight:600}
-.ad-label{position:absolute;top:3px;right:8px;font-size:9px;color:rgba(0,0,0,.2);background:rgba(0,0,0,.04);padding:1px 6px;border-radius:3px}
+.ad-bar .ad-placeholder{color:rgba(0,0,0,.18);font-size:11px;letter-spacing:1px}
+.ad-label{position:absolute;top:3px;right:8px;font-size:9px;color:rgba(0,0,0,.15);background:rgba(0,0,0,.04);padding:1px 6px;border-radius:3px;z-index:2}
 #posterCanvas{display:none}
 </style>
 </head>
@@ -126,10 +127,46 @@ body{
   </section>
 </div>
 
+<!-- 顶部广告位 — 广点通优量汇 -->
 <div class="ad-bar">
   <span class="ad-label">广告</span>
-  <span class="ad-ph">—— 广告位 ——</span>
+  <div id="gdt-ad-container" style="width:100%;min-height:50px;display:flex;align-items:center;justify-content:center">
+    <span class="ad-placeholder">广告加载中...</span>
+  </div>
 </div>
+
+<!-- 广点通SDK -->
+<script>
+window.TencentGDT = window.TencentGDT || [];
+// ⚠️ 需要在广点通后台创建H5 Banner广告位后填入真实的 placement_id
+// 账号：海口庚熙智创科技有限公司 ID:81135189
+// 步骤：登录 e.qq.com → 流量主 → 我的广告位 → 新建H5广告位 → 获取placement_id
+TencentGDT.push({
+  app_id: '81135189',
+  placement_id: 'PLACEHOLDER_NEED_REAL_ID',  // TODO: 替换为真实广告位ID
+  type: 'native',
+  display_type: 'banner',
+  containerid: 'gdt-ad-container',
+  onComplete: function(res) {
+    if (res.ret === 0) {
+      // 广告加载成功，隐藏占位文字
+      var ph = document.querySelector('.ad-placeholder');
+      if (ph) ph.style.display = 'none';
+    }
+  },
+  onError: function() {
+    // 广告加载失败，显示兜底
+    var ph = document.querySelector('.ad-placeholder');
+    if (ph) ph.textContent = '—— 广告位 ——';
+  }
+});
+(function(){
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';
+  document.head.appendChild(s);
+})();
+</script>
 
 <canvas id="posterCanvas"></canvas>
 
