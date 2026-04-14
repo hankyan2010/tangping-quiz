@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>全球躺平退路规划局</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" async></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--brand:#FFD100;--brand-dark:#E6BC00;--title:#111;--body:#333;--sub:#999;--bg:#FFD100;--card:#fff}
@@ -136,7 +136,7 @@ body{
 <script>
 const questions=[
   {q:"老板凌晨1点在群里发「大家辛苦了」",opts:[
-    ["手指比脑子快，0.3秒弹射回复"老板最辛苦！"",10],
+    ["手指比脑子快，0.3秒弹射回复「老板最辛苦！」",10],
     ["手机扣过去，让已读的良心慢慢腐烂",5],
     ["消息免打扰？我连App都卸了",0]]},
   {q:"花呗信用卡下月全免了，你第一件事？",opts:[
@@ -260,6 +260,7 @@ function poster(){
   cx.textAlign='center';cx.fillStyle='rgba(255,255,255,.45)';cx.font='italic 22px sans-serif';
   cx.fillText('「'+mt.q+'」',W/2,Math.min(ey+55,H-155));
   cx.fillStyle='rgba(0,0,0,.12)';cx.fillRect(0,H-110,W,110);
+  if(typeof qrcode==='undefined'){cx.fillStyle='rgba(255,255,255,.6)';cx.font='500 16px sans-serif';cx.textAlign='center';cx.fillText('扫码测测你的退路',W/2,H-50);document.getElementById('posterImg').src=cv.toDataURL('image/png');sw('result');return;}
   const qr=qrcode(0,'M');qr.addData(URL0);qr.make();
   const qs=66,qx=W/2-qs/2,qy=H-100,mc=qr.getModuleCount(),cs=qs/mc;
   rr(cx,qx-4,qy-4,qs+8,qs+8,5);cx.fillStyle='#fff';cx.fill();
