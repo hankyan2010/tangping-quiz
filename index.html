@@ -92,7 +92,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
       </div>
       <div class="q-num" id="qNum">第 1 题</div>
       <div class="q-title" id="qTitle"></div>
-      <div class="pixel-art"><canvas id="pixelCanvas" width="64" height="32"></canvas></div>
+      <div class="pixel-art"><canvas id="pixelCanvas" width="160" height="80"></canvas></div>
       <div id="qOpts"></div>
     </div>
   </section>
@@ -145,125 +145,329 @@ TencentGDT.push({
 <canvas id="posterCanvas"></canvas>
 
 <script>
-// ══════ 8-bit 像素画场景数据 ══════
-// 每道题对应一个场景，用简单的色块矩阵绘制
-const pixelScenes = [
-  // Q1: 深夜办公室 — 老板发消息
-  {bg:'#1a1a2e',items:[
-    {type:'rect',x:8,y:18,w:48,h:14,color:'#2d2d44'}, // 桌子
-    {type:'rect',x:20,y:10,w:12,h:10,color:'#3a3a5c'}, // 显示器
-    {type:'rect',x:22,y:12,w:8,h:6,color:'#4fc3f7'},   // 屏幕光
-    {type:'rect',x:50,y:5,w:4,h:4,color:'#ffd54f'},     // 月亮
-    {type:'rect',x:10,y:14,w:6,h:8,color:'#81c784'},    // 人
-    {type:'rect',x:11,y:12,w:4,h:3,color:'#a5d6a7'},    // 头
-    {type:'rect',x:42,y:2,w:2,h:2,color:'#fff'},        // 星
-    {type:'rect',x:55,y:8,w:1,h:1,color:'#fff'},        // 星
-    {type:'rect',x:5,y:3,w:1,h:1,color:'#fff'},         // 星
-    {type:'rect',x:38,y:14,w:5,h:4,color:'#ef5350'},    // 手机红点
-  ]},
-  // Q2: 花呗账单 — 钱飞走
-  {bg:'#fff8e1',items:[
-    {type:'rect',x:20,y:8,w:24,h:16,color:'#ffcc02'},  // 大金币
-    {type:'rect',x:24,y:12,w:16,h:8,color:'#ffa000'},  // $
-    {type:'rect',x:8,y:20,w:8,h:6,color:'#4caf50'},    // 钱1
-    {type:'rect',x:48,y:18,w:8,h:6,color:'#4caf50'},   // 钱2
-    {type:'rect',x:4,y:10,w:6,h:5,color:'#4caf50'},    // 钱飞
-    {type:'rect',x:54,y:6,w:6,h:5,color:'#4caf50'},    // 钱飞
-    {type:'rect',x:30,y:26,w:4,h:4,color:'#795548'},   // 人
-    {type:'rect',x:31,y:24,w:2,h:2,color:'#a1887f'},   // 头
-  ]},
-  // Q3: 办公室 — 同事升职
-  {bg:'#e3f2fd',items:[
-    {type:'rect',x:0,y:20,w:64,h:12,color:'#cfd8dc'},   // 地板
-    {type:'rect',x:30,y:8,w:8,h:14,color:'#f44336'},     // 升职的人
-    {type:'rect',x:31,y:5,w:6,h:4,color:'#ffcdd2'},      // 头
-    {type:'rect',x:28,y:2,w:12,h:4,color:'#ffd54f'},     // 皇冠
-    {type:'rect',x:10,y:12,w:6,h:10,color:'#90a4ae'},    // 你
-    {type:'rect',x:11,y:10,w:4,h:3,color:'#b0bec5'},     // 头
-    {type:'rect',x:50,y:10,w:10,h:10,color:'#8d6e63'},   // 桌
-  ]},
-  // Q4: 存款 — 钱包空了
-  {bg:'#fce4ec',items:[
-    {type:'rect',x:22,y:6,w:20,h:16,color:'#795548'},  // 钱包
-    {type:'rect',x:24,y:8,w:16,h:12,color:'#4e342e'},  // 钱包内
-    {type:'rect',x:28,y:12,w:8,h:4,color:'#d7ccc8'},   // 空空如也
-    {type:'rect',x:14,y:24,w:6,h:6,color:'#ef9a9a'},   // 蛾子1
-    {type:'rect',x:44,y:22,w:6,h:6,color:'#ef9a9a'},   // 蛾子2
-    {type:'rect',x:8,y:26,w:4,h:4,color:'#e0e0e0'},    // 蜘蛛网
-  ]},
-  // Q5: 婚姻 — 钻戒vs猫
-  {bg:'#f3e5f5',items:[
-    {type:'rect',x:10,y:10,w:12,h:12,color:'#ff80ab'},  // 戒指盒
-    {type:'rect',x:13,y:6,w:6,h:6,color:'#ffd54f'},     // 钻石
-    {type:'rect',x:42,y:10,w:12,h:12,color:'#ffcc80'},   // 猫
-    {type:'rect',x:44,y:7,w:8,h:5,color:'#ffe0b2'},     // 猫头
-    {type:'rect',x:45,y:4,w:2,h:4,color:'#ffcc80'},     // 左耳
-    {type:'rect',x:50,y:4,w:2,h:4,color:'#ffcc80'},     // 右耳
-    {type:'rect',x:30,y:14,w:4,h:8,color:'#9e9e9e'},    // VS
-  ]},
-  // Q6: 团建 — 痛苦面具
-  {bg:'#e8f5e9',items:[
-    {type:'rect',x:10,y:8,w:44,h:20,color:'#a5d6a7'},  // 草地
-    {type:'rect',x:20,y:4,w:10,h:12,color:'#2196f3'},   // 人1
-    {type:'rect',x:34,y:4,w:10,h:12,color:'#f44336'},   // 人2
-    {type:'rect',x:6,y:10,w:8,h:10,color:'#9e9e9e'},    // 你在厕所
-    {type:'rect',x:4,y:8,w:12,h:2,color:'#795548'},     // 厕所门
-    {type:'rect',x:50,y:6,w:8,h:8,color:'#ffd54f'},     // 太阳
-  ]},
-  // Q7: 医院 — 医生和你
-  {bg:'#e0f7fa',items:[
-    {type:'rect',x:0,y:22,w:64,h:10,color:'#e0e0e0'},  // 地板
-    {type:'rect',x:10,y:8,w:10,h:14,color:'#ffffff'},   // 医生
-    {type:'rect',x:12,y:5,w:6,h:4,color:'#ffccbc'},     // 医生头
-    {type:'rect',x:10,y:2,w:10,h:4,color:'#e0e0e0'},    // 帽子
-    {type:'rect',x:40,y:10,w:8,h:12,color:'#90a4ae'},   // 你
-    {type:'rect',x:42,y:8,w:4,h:3,color:'#b0bec5'},     // 头
-    {type:'rect',x:24,y:12,w:12,h:8,color:'#bbdefb'},   // 药
-    {type:'rect',x:50,y:4,w:2,h:2,color:'#f44336'},     // 红十字
-  ]},
-  // Q8: 朋友圈 — 前任度假
-  {bg:'#e1f5fe',items:[
-    {type:'rect',x:0,y:20,w:64,h:12,color:'#ffe082'},  // 沙滩
-    {type:'rect',x:0,y:0,w:64,h:20,color:'#4fc3f7'},   // 海
-    {type:'rect',x:30,y:14,w:10,h:10,color:'#f48fb1'},  // 前任
-    {type:'rect',x:32,y:12,w:6,h:3,color:'#f8bbd0'},    // 头
-    {type:'rect',x:44,y:16,w:8,h:8,color:'#8d6e63'},    // 椰树干
-    {type:'rect',x:42,y:8,w:12,h:10,color:'#66bb6a'},   // 椰树叶
-    {type:'rect',x:10,y:22,w:6,h:6,color:'#ffb74d'},    // 🍹
-  ]},
-  // Q9: 购物车 — 凑单
-  {bg:'#fff3e0',items:[
-    {type:'rect',x:18,y:6,w:28,h:20,color:'#ff9800'},  // 购物车
-    {type:'rect',x:20,y:8,w:24,h:14,color:'#ffe0b2'},  // 车内
-    {type:'rect',x:22,y:10,w:6,h:6,color:'#f44336'},   // 商品1
-    {type:'rect',x:30,y:10,w:6,h:6,color:'#2196f3'},   // 商品2
-    {type:'rect',x:36,y:10,w:6,h:6,color:'#4caf50'},   // 商品3
-    {type:'rect',x:22,y:26,w:5,h:5,color:'#424242'},   // 轮子
-    {type:'rect',x:37,y:26,w:5,h:5,color:'#424242'},   // 轮子
-  ]},
-  // Q10: 红色按钮 — 500万
-  {bg:'#212121',items:[
-    {type:'rect',x:22,y:8,w:20,h:16,color:'#b71c1c'},  // 按钮
-    {type:'rect',x:24,y:10,w:16,h:12,color:'#f44336'},  // 按钮面
-    {type:'rect',x:28,y:13,w:8,h:6,color:'#ff8a80'},    // 高光
-    {type:'rect',x:10,y:26,w:8,h:4,color:'#ffd54f'},    // $500W
-    {type:'rect',x:46,y:26,w:8,h:4,color:'#ffd54f'},    // $500W
-    {type:'rect',x:2,y:2,w:3,h:3,color:'#ffd54f'},      // 闪光
-    {type:'rect',x:58,y:4,w:3,h:3,color:'#ffd54f'},     // 闪光
-  ]}
-];
+// ══════ 8-bit 像素画引擎（160x80） ══════
+const W8=160,H8=80;
+function P(cx,x,y,c){cx.fillStyle=c;cx.fillRect(x,y,1,1);}
+function R(cx,x,y,w,h,c){cx.fillStyle=c;cx.fillRect(x,y,w,h);}
+// 画像素小人（x,y=脚底中心，skinC=肤色，shirtC=衣服色，pantsC=裤子色，hairC=头发色）
+function drawPerson(cx,x,y,skinC,shirtC,pantsC,hairC,faceType){
+  // 头发 5x3
+  R(cx,x-2,y-16,5,2,hairC);
+  // 头 5x4
+  R(cx,x-2,y-14,5,4,skinC);
+  // 眼睛
+  P(cx,x-1,y-13,'#222');P(cx,x+1,y-13,'#222');
+  // 表情
+  if(faceType==='sad'){P(cx,x,y-11,'#c66');}
+  else if(faceType==='happy'){P(cx,x-1,y-11,skinC);P(cx,x,y-11,'#a55');P(cx,x+1,y-11,skinC);}
+  else{P(cx,x,y-11,skinC);}
+  // 身体 5x5
+  R(cx,x-2,y-10,5,5,shirtC);
+  // 手臂
+  R(cx,x-3,y-9,1,4,skinC);R(cx,x+3,y-9,1,4,skinC);
+  // 裤子 5x3
+  R(cx,x-2,y-5,2,3,pantsC);R(cx,x+1,y-5,2,3,pantsC);
+  // 鞋
+  R(cx,x-2,y-2,2,2,'#333');R(cx,x+1,y-2,2,2,'#333');
+}
+// 画桌子
+function drawDesk(cx,x,y,w,c1,c2){
+  R(cx,x,y,w,2,c1);R(cx,x+1,y+2,2,8,c2);R(cx,x+w-3,y+2,2,8,c2);
+}
+// 画显示器
+function drawMonitor(cx,x,y,screenC){
+  R(cx,x,y,14,10,'#333');R(cx,x+1,y+1,12,8,screenC);
+  R(cx,x+5,y+10,4,2,'#555');R(cx,x+3,y+12,8,1,'#444');
+}
+// 画星星
+function drawStars(cx,stars){stars.forEach(s=>{P(cx,s[0],s[1],'#fff');if(s[2])P(cx,s[0]+1,s[1],'rgba(255,255,255,0.5)');});}
+// 画窗户
+function drawWindow(cx,x,y,w,h,glowC){
+  R(cx,x,y,w,h,'#556');R(cx,x+1,y+1,w-2,h-2,glowC);
+  R(cx,x+w/2|0,y,1,h,'#556');R(cx,x,y+h/2|0,w,1,'#556');
+}
+// 画树
+function drawTree(cx,x,y){
+  R(cx,x+2,y,1,6,'#5d4037');
+  R(cx,x,y-4,5,4,'#2e7d32');R(cx,x+1,y-6,3,3,'#388e3c');R(cx,x+2,y-7,1,1,'#43a047');
+}
+// 画云
+function drawCloud(cx,x,y){
+  R(cx,x+2,y,6,3,'#fff');R(cx,x,y+1,10,2,'#fff');R(cx,x+1,y+3,8,1,'#e8e8e8');
+}
+// 画猫
+function drawCat(cx,x,y,c){
+  R(cx,x,y,7,5,c);R(cx,x+1,y-3,5,3,c);
+  P(cx,x,y-4,c);P(cx,x+1,y-5,c);P(cx,x+5,y-4,c);P(cx,x+4,y-5,c); // 耳朵
+  P(cx,x+2,y-2,'#222');P(cx,x+4,y-2,'#222'); // 眼睛
+  P(cx,x+3,y-1,'#f8a');// 鼻子
+  R(cx,x+7,y+2,4,1,c);P(cx,x+10,y+1,c); // 尾巴
+}
+// 画金币
+function drawCoin(cx,x,y,s){
+  R(cx,x,y,s,s,'#ffd54f');R(cx,x+1,y+1,s-2,s-2,'#ffb300');
+  if(s>=5){R(cx,x+s/2|0,y+1,1,s-2,'#ffd54f');}
+}
 
 function drawPixelScene(idx){
   const cv=document.getElementById('pixelCanvas');
   const cx=cv.getContext('2d');
-  const sc=pixelScenes[idx]||pixelScenes[0];
-  // 背景
-  cx.fillStyle=sc.bg;cx.fillRect(0,0,64,32);
-  // 画方块
-  sc.items.forEach(it=>{
-    cx.fillStyle=it.color;
-    cx.fillRect(it.x,it.y,it.w,it.h);
-  });
+  cx.clearRect(0,0,W8,H8);
+
+  if(idx===0){
+    // Q1: 深夜办公室 — 老板凌晨发消息
+    // 天空
+    R(cx,0,0,W8,H8,'#0d1b2a');
+    // 星星
+    drawStars(cx,[[10,5,1],[30,8],[55,3,1],[90,6],[120,4],[145,9,1],[70,2],[135,7]]);
+    // 月亮
+    R(cx,135,8,8,8,'#ffd54f');R(cx,137,7,6,6,'#ffe082');R(cx,139,8,4,4,'#0d1b2a');
+    // 地板
+    R(cx,0,60,W8,20,'#1a1a2e');
+    // 窗户（城市夜景）
+    drawWindow(cx,100,15,20,18,'#1b3a5c');
+    // 远处楼光
+    R(cx,103,18,3,2,'#ffc107');R(cx,112,22,2,2,'#ff9800');R(cx,108,26,2,1,'#4fc3f7');
+    // 桌子
+    drawDesk(cx,20,52,50,'#5d4037','#4e342e');
+    // 显示器
+    drawMonitor(cx,30,40,'#4fc3f7');
+    // 屏幕上的消息气泡
+    R(cx,33,43,6,3,'#fff');P(cx,34,44,'#333');P(cx,36,44,'#333');
+    // 键盘
+    R(cx,28,53,10,2,'#616161');
+    // 手机（亮着 + 红点）
+    R(cx,55,48,6,10,'#333');R(cx,56,49,4,7,'#4fc3f7');R(cx,59,48,2,2,'#f44336');
+    // 咖啡杯
+    R(cx,48,50,4,4,'#fff');R(cx,52,51,2,2,'#fff');R(cx,49,49,2,1,'#8d6e63');
+    // 人（趴在桌上的疲惫社畜）
+    R(cx,22,45,8,7,'#3949ab'); // 身体
+    R(cx,24,42,6,4,'#ffcc80');  // 头趴着
+    P(cx,25,44,'#222');P(cx,28,44,'#222'); // 闭眼
+    R(cx,20,48,2,4,'#ffcc80'); // 手臂
+    // 时钟 1:00
+    R(cx,80,20,8,8,'#fff');R(cx,81,21,6,6,'#eee');
+    R(cx,84,22,1,3,'#333');R(cx,84,24,2,1,'#f44336');
+  }
+  else if(idx===1){
+    // Q2: 花呗全免 — 钱长翅膀飞走
+    R(cx,0,0,W8,50,'#e3f2fd');R(cx,0,50,W8,30,'#c8e6c9');
+    drawCloud(cx,15,8);drawCloud(cx,90,5);drawCloud(cx,55,12);
+    // 飞翔的钱
+    for(let i=0;i<6;i++){
+      const bx=15+i*22,by=15+Math.sin(i*1.2)*10;
+      R(cx,bx,by|0,10,6,'#66bb6a');R(cx,bx+1,by+1|0,8,4,'#81c784');
+      R(cx,bx+4,by+2|0,2,2,'#fff'); // $符号
+      // 翅膀
+      R(cx,bx+2,by-2|0,2,2,'#fff');R(cx,bx+6,by-2|0,2,2,'#fff');
+      R(cx,bx+1,by-3|0,1,1,'#e0e0e0');R(cx,bx+7,by-3|0,1,1,'#e0e0e0');
+    }
+    // 人站在地上仰望
+    drawPerson(cx,80,72,'#ffcc80','#1565c0','#37474f','#4e342e','sad');
+    // 空钱包掉在地上
+    R(cx,70,68,8,5,'#795548');R(cx,71,69,6,3,'#3e2723');
+    // 蝴蝶（装饰）
+    P(cx,40,35,'#e91e63');P(cx,42,35,'#e91e63');P(cx,41,36,'#880e4f');
+  }
+  else if(idx===2){
+    // Q3: 同事头戴皇冠升职 — 你在角落暗淡
+    R(cx,0,0,W8,H8,'#e8eaf6');R(cx,0,58,W8,22,'#cfd8dc');
+    // 办公室
+    drawDesk(cx,55,50,35,'#8d6e63','#6d4c41');drawDesk(cx,10,50,35,'#8d6e63','#6d4c41');
+    // 升职同事 — 居中高光
+    drawPerson(cx,95,58,'#ffcc80','#e53935','#333','#4e342e','happy');
+    // 皇冠
+    R(cx,92,39,7,2,'#ffd54f');R(cx,91,37,2,3,'#ffd54f');R(cx,94,36,3,2,'#ffd54f');R(cx,97,37,2,3,'#ffd54f');
+    P(cx,92,37,'#ff5722');P(cx,95,36,'#ff5722');P(cx,98,37,'#ff5722');
+    // 金光
+    for(let i=0;i<5;i++){P(cx,88+i*4,34,'#ffd54f');P(cx,89+i*3,33,'#ffe082');}
+    // 你 — 角落灰暗
+    drawPerson(cx,30,58,'#bcaaa4','#78909c','#546e7a','#455a64','sad');
+    // 阴影效果（你身上暗淡）
+    R(cx,27,43,7,15,'rgba(0,0,0,0.1)');
+    // 窗户
+    drawWindow(cx,5,10,18,20,'#bbdefb');
+    // 绿植
+    drawTree(cx,138,55);
+  }
+  else if(idx===3){
+    // Q4: 存款 — 巨大空钱包+蜘蛛网+飞蛾
+    R(cx,0,0,W8,H8,'#fce4ec');R(cx,0,60,W8,20,'#f8bbd0');
+    // 巨大钱包
+    R(cx,45,15,70,42,'#795548');R(cx,48,12,64,5,'#8d6e63');R(cx,50,18,60,35,'#4e342e');
+    // 钱包扣
+    R(cx,76,12,8,5,'#ffd54f');
+    // 蜘蛛网（钱包内）
+    for(let i=0;i<6;i++){cx.fillStyle='rgba(200,200,200,0.4)';
+      cx.fillRect(55+i*8,22,1,28);cx.fillRect(52,25+i*5,50,1);}
+    // 飞蛾
+    R(cx,65,30,3,2,'#e0e0e0');R(cx,63,29,2,1,'#ccc');R(cx,68,29,2,1,'#ccc');
+    R(cx,90,35,3,2,'#e0e0e0');R(cx,88,34,2,1,'#ccc');R(cx,93,34,2,1,'#ccc');
+    // 你在左边哭
+    drawPerson(cx,25,72,'#ffcc80','#546e7a','#37474f','#4e342e','sad');
+    // 眼泪
+    P(cx,24,60,'#4fc3f7');P(cx,26,61,'#4fc3f7');P(cx,24,63,'#4fc3f7');
+    // 蜘蛛
+    R(cx,58,24,3,3,'#333');R(cx,57,23,1,1,'#333');R(cx,61,23,1,1,'#333');
+    for(let i=0;i<4;i++){P(cx,56+i*2,27,'#333');}
+  }
+  else if(idx===4){
+    // Q5: 戒指 vs 猫 — 灵魂拷问
+    R(cx,0,0,W8,H8,'#f3e5f5');R(cx,0,60,W8,20,'#e1bee7');
+    // 左边：钻戒
+    R(cx,18,25,26,28,'#f48fb1');R(cx,20,27,22,24,'#fce4ec'); // 盒子
+    R(cx,26,18,10,10,'#ffd54f');R(cx,28,16,6,4,'#fff9c4'); // 钻石
+    R(cx,27,20,8,2,'#ffb300');// 戒环
+    // 闪光
+    P(cx,24,14,'#fff');P(cx,37,15,'#fff');P(cx,22,20,'#fff');P(cx,38,18,'#fff');
+    // 中间 VS
+    R(cx,74,34,12,10,'#9c27b0');
+    cx.fillStyle='#fff';cx.font='8px sans-serif';cx.textAlign='center';
+    cx.fillText('VS',80,42);cx.textAlign='left';
+    // 右边：猫
+    drawCat(cx,105,45,'#ffb74d');
+    // 猫坐垫
+    R(cx,102,50,14,5,'#e91e63');R(cx,103,49,12,2,'#f48fb1');
+    // 红心 vs 猫爪
+    R(cx,30,55,3,3,'#e91e63');P(cx,29,54,'#e91e63');P(cx,33,54,'#e91e63');
+    R(cx,110,55,2,2,'#ffcc80');P(cx,109,56,'#ffcc80');P(cx,112,56,'#ffcc80');
+  }
+  else if(idx===5){
+    // Q6: 团建破冰 — 你在厕所躲
+    R(cx,0,0,W8,40,'#81d4fa');R(cx,0,40,W8,40,'#a5d6a7');
+    // 太阳
+    R(cx,130,8,12,12,'#ffd54f');R(cx,132,10,8,8,'#ffee58');
+    drawCloud(cx,20,10);drawCloud(cx,70,6);
+    // 团建的人群（活跃）
+    drawPerson(cx,60,65,'#ffcc80','#e53935','#333','#3e2723','happy');
+    drawPerson(cx,80,65,'#d7ccc8','#1565c0','#333','#5d4037','happy');
+    drawPerson(cx,100,65,'#ffcc80','#ff9800','#333','#4e342e','happy');
+    drawPerson(cx,120,68,'#d7ccc8','#7b1fa2','#333','#3e2723','happy');
+    // 气球
+    R(cx,55,40,5,6,'#f44336');P(cx,57,46,'#333');R(cx,57,46,1,5,'#666');
+    R(cx,85,38,5,6,'#4caf50');P(cx,87,44,'#333');R(cx,87,44,1,5,'#666');
+    // 厕所（左边角落）
+    R(cx,2,45,25,30,'#e0e0e0');R(cx,3,46,23,28,'#f5f5f5');
+    R(cx,2,45,25,2,'#9e9e9e'); // 门框
+    R(cx,14,45,1,30,'#bdbdbd'); // 门缝
+    // 你在厕所里（只露出鞋）
+    R(cx,8,70,3,2,'#333');R(cx,17,70,3,2,'#333');
+    // 手机光
+    R(cx,12,55,4,6,'#4fc3f7');R(cx,13,56,2,4,'#e3f2fd');
+    // "WC"标志
+    cx.fillStyle='#666';cx.font='5px sans-serif';cx.fillText('WC',6,50);
+  }
+  else if(idx===6){
+    // Q7: 医院 — 医生 + 你 + 巨大药瓶
+    R(cx,0,0,W8,H8,'#e0f7fa');R(cx,0,60,W8,20,'#b2ebf2');
+    // 红十字
+    R(cx,72,5,16,16,'#fff');R(cx,76,7,8,12,'#f44336');R(cx,74,11,12,4,'#f44336');
+    // 医院墙
+    R(cx,0,20,W8,40,'#f5f5f5');R(cx,0,58,W8,2,'#e0e0e0');
+    // 窗户
+    drawWindow(cx,10,25,16,14,'#b3e5fc');drawWindow(cx,130,25,16,14,'#b3e5fc');
+    // 病床
+    R(cx,85,48,40,4,'#fff');R(cx,85,52,3,10,'#bdbdbd');R(cx,122,52,3,10,'#bdbdbd');
+    R(cx,83,44,5,8,'#e0e0e0'); // 床头
+    // 医生
+    drawPerson(cx,50,72,'#ffcc80','#fff','#fff','#e0e0e0','happy');
+    // 听诊器
+    R(cx,49,60,3,2,'#333');
+    // 你躺在床上
+    R(cx,90,45,25,5,'#78909c'); // 身体躺着
+    R(cx,88,43,6,4,'#ffcc80');  // 头
+    P(cx,89,44,'#222');P(cx,92,44,'#222'); // 眼
+    // 巨大药瓶
+    R(cx,15,40,14,22,'#fff');R(cx,17,38,10,4,'#e53935');
+    R(cx,18,36,8,3,'#c62828');
+    cx.fillStyle='#e53935';cx.font='6px sans-serif';cx.fillText('Rx',19,52);
+    // 输液架
+    R(cx,116,25,2,28,'#bdbdbd');R(cx,112,24,10,2,'#bdbdbd');
+    R(cx,113,20,4,5,'#bbdefb');
+  }
+  else if(idx===7){
+    // Q8: 前任马尔代夫度假 — 你在被窝刷朋友圈
+    // 海滩场景（手机屏幕内）
+    R(cx,0,0,W8,H8,'#263238'); // 暗房间
+    // 被子
+    R(cx,0,40,100,40,'#5c6bc0');R(cx,0,38,100,4,'#7986cb');
+    // 你在被窝里
+    R(cx,30,30,10,10,'#ffcc80'); // 头
+    P(cx,33,33,'#222');P(cx,37,33,'#222'); // 眼睛看手机
+    P(cx,32,34,'#4fc3f7');P(cx,38,34,'#4fc3f7'); // 屏幕反光
+    // 手机（大亮屏）
+    R(cx,50,20,30,40,'#333');R(cx,52,22,26,34,'#4fc3f7');
+    // 手机里的沙滩照片
+    R(cx,52,22,26,16,'#29b6f6'); // 海
+    R(cx,52,38,26,10,'#ffe082'); // 沙滩
+    R(cx,60,30,6,10,'#f48fb1');  // 前任
+    R(cx,70,32,4,8,'#8d6e63');R(cx,68,26,8,6,'#66bb6a'); // 椰树
+    // 眼泪
+    P(cx,33,37,'#4fc3f7');P(cx,37,38,'#4fc3f7');P(cx,34,40,'#4fc3f7');
+    // 纸巾盒
+    R(cx,110,50,16,10,'#e0e0e0');R(cx,116,47,4,4,'#f5f5f5');
+    // 月光从窗户照进来
+    R(cx,120,5,30,20,'#37474f');R(cx,122,7,26,16,'#1a237e');
+    R(cx,140,10,5,5,'#ffd54f'); // 月亮
+  }
+  else if(idx===8){
+    // Q9: 购物车堆满 — 凑单
+    R(cx,0,0,W8,H8,'#fff3e0');R(cx,0,62,W8,18,'#ffe0b2');
+    // 巨大购物车
+    R(cx,30,15,80,42,'#ff9800');R(cx,32,17,76,38,'#ffe0b2');
+    R(cx,25,55,4,2,'#ff9800');// 把手
+    // 商品堆满
+    R(cx,35,20,14,10,'#f44336');R(cx,36,21,12,8,'#ef5350'); // 红盒子
+    R(cx,52,18,12,14,'#2196f3');R(cx,53,19,10,12,'#42a5f5'); // 蓝盒子
+    R(cx,68,22,10,8,'#4caf50');R(cx,69,23,8,6,'#66bb6a'); // 绿盒子
+    R(cx,82,20,16,12,'#9c27b0');R(cx,83,21,14,10,'#ba68c8'); // 紫盒子
+    R(cx,40,32,20,10,'#ff9800');R(cx,41,33,18,8,'#ffb74d'); // 橙盒子
+    R(cx,65,32,14,10,'#e91e63');R(cx,66,33,12,8,'#f48fb1'); // 粉盒子
+    R(cx,85,34,10,8,'#00bcd4'); // 多一个
+    // 溢出的商品
+    R(cx,100,12,8,6,'#f44336');R(cx,28,10,8,6,'#ffd54f');
+    // 轮子
+    R(cx,42,57,8,8,'#424242');R(cx,44,59,4,4,'#616161');
+    R(cx,90,57,8,8,'#424242');R(cx,92,59,4,4,'#616161');
+    // 价格标签飞出
+    R(cx,15,25,10,6,'#ffd54f');R(cx,120,15,10,6,'#ffd54f');
+    cx.fillStyle='#e65100';cx.font='4px sans-serif';cx.fillText('¥',17,30);cx.fillText('¥',122,20);
+    // 人推车
+    drawPerson(cx,22,72,'#ffcc80','#1565c0','#37474f','#4e342e','happy');
+  }
+  else if(idx===9){
+    // Q10: 500万红色按钮 — 黑暗中发光
+    R(cx,0,0,W8,H8,'#1a1a1a');
+    // 聚光灯效果
+    for(let r=40;r>0;r-=2){
+      cx.fillStyle=`rgba(255,${50+r*2},${20+r},${0.02})`;
+      cx.beginPath();cx.arc(80,40,r,0,Math.PI*2);cx.fill();
+    }
+    // 底座
+    R(cx,55,52,50,8,'#333');R(cx,58,50,44,4,'#444');
+    R(cx,60,48,40,4,'#555');
+    // 大红按钮（立体感）
+    R(cx,62,28,36,22,'#b71c1c'); // 阴影
+    R(cx,64,26,32,20,'#f44336'); // 按钮主体
+    R(cx,66,28,28,12,'#ff5252'); // 高光
+    R(cx,68,30,20,6,'#ff8a80');  // 顶部高光
+    // 按钮上的文字
+    cx.fillStyle='#fff';cx.font='bold 7px sans-serif';cx.textAlign='center';
+    cx.fillText('¥500万',80,41);cx.textAlign='left';
+    // 金光粒子
+    const sparks=[[40,15],[120,10],[25,35],[135,25],[50,5],[110,50],[30,55],[130,45],[45,60],[115,60]];
+    sparks.forEach(s=>{
+      P(cx,s[0],s[1],'#ffd54f');P(cx,s[0]+1,s[1],'#fff');
+    });
+    // 两边的骷髅钟表（代价=老十岁）
+    R(cx,10,20,12,14,'#fff');R(cx,12,22,8,8,'#eee');
+    R(cx,16,23,1,4,'#333');R(cx,16,25,3,1,'#f44336'); // 指针
+    // 右边老化符号
+    R(cx,138,20,12,14,'#fff');R(cx,140,22,8,8,'#eee');
+    R(cx,144,23,1,4,'#333');R(cx,144,25,3,1,'#f44336');
+    // 人在按钮前犹豫
+    drawPerson(cx,80,72,'#ffcc80','#37474f','#263238','#4e342e','sad');
+  }
 }
 
 const questions=[
