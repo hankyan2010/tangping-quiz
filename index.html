@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>全球躺平退路规划局</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #000; color: #fff; overflow-x: hidden; }
+        .container { max-width: 600px; margin: 0 auto; min-height: 100vh; padding: 20px; position: relative; }
+
+        /* 视图切换 */
+        .view { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; min-height: 80vh; }
+        .view.active { display: flex; animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 首页样式 */
+        .title-huge { font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin-bottom: 15px; letter-spacing: -1px; }
+        .subtitle { font-size: 1.1rem; color: #888; margin-bottom: 40px; line-height: 1.5; }
+        .btn-primary { background: #ccff00; color: #000; font-size: 1.2rem; font-weight: bold; border: none; padding: 18px 20px; width: 100%; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; }
+        .btn-primary:active { transform: scale(0.96); }
+
+        /* 答题页样式 */
+        .progress { color: #ccff00; font-weight: bold; margin-bottom: 20px; font-size: 1.2rem; }
+        .question-text { font-size: 1.6rem; font-weight: 800; margin-bottom: 30px; line-height: 1.4; }
+        .option-btn { background: #1a1a1a; color: #fff; border: 2px solid #333; padding: 16px; margin-bottom: 12px; font-size: 1.1rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .option-btn:hover { border-color: #ccff00; }
+        .option-btn:active { background: #ccff00; color: #000; }
+
+        /* 加载页样式 */
+        .loading-text { font-size: 1.5rem; font-weight: bold; text-align: center; color: #ccff00; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* 结果页样式 */
+        .result-city { font-size: 3.5rem; font-weight: 900; margin: 10px 0; color: #ccff00; text-shadow: 2px 2px 0px #ff0055; }
+        .result-tag { display: inline-block; background: #fff; color: #000; padding: 4px 10px; font-weight: bold; margin-bottom: 20px; font-size: 1rem; }
+        .result-desc { font-size: 1.2rem; line-height: 1.6; color: #ccc; margin-bottom: 40px; border-left: 4px solid #ccff00; padding-left: 15px; }
+
+        .ad-btn { background: #ff0055; color: #fff; box-shadow: 0 0 15px rgba(255,0,85,0.5); border: none; padding: 18px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        .action-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-secondary { flex: 1; background: transparent; color: #888; border: 1px solid #444; padding: 12px; cursor: pointer; font-size: 1rem; }
+
+        /* 弹窗样式 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; padding: 20px; }
+        .modal-content { background: #111; border: 1px solid #ccff00; padding: 30px; margin-top: 40%; color: #fff; }
+        .modal-close { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="view-home" class="view active">
+        <h1 class="title-huge">全球躺平<br>退路规划局</h1>
+        <p class="subtitle">全网都在教你怎么卷，我们只关心你还能退到哪。基于心理学与账户余额的无情鉴定，别拿没钱当借口，只要你足够摆烂，全球总有一个地方收留你这具疲惫的躯壳。<br><br>&#9888;&#65039; 警告：结果极其扎心，玻璃心勿入。</p>
+        <button class="btn-primary" onclick="startQuiz()">测测你的财力配去哪要饭</button>
+    </div>
+
+    <div id="view-quiz" class="view">
+        <div class="progress" id="quiz-progress">1 / 10</div>
+        <div class="question-text" id="quiz-title">题目加载中...</div>
+        <div id="quiz-options"></div>
+    </div>
+
+    <div id="view-loading" class="view">
+        <div class="loading-text" id="loading-msg">正在扫描你的微信零钱余额...</div>
+    </div>
+
+    <div id="view-result" class="view">
+        <p style="color:#888; font-size:1rem;">经过无情的大数据分析，最适合你的退路是：</p>
+        <h1 class="result-city" id="res-city">鹤岗</h1>
+        <div><span class="result-tag" id="res-tag">灵魂的最终归宿</span></div>
+        <p class="result-desc" id="res-desc">文案加载中...</p>
+
+        <button class="ad-btn" id="btn-ad-unlock" onclick="watchAdToUnlock()">
+            &#128274; 看视频解锁《低成本苟活指南》
+        </button>
+
+        <div class="action-btns">
+            <button class="btn-secondary" onclick="shareResult()">截图发给同事</button>
+            <button class="btn-secondary" onclick="location.reload()">重新投胎</button>
+        </div>
+    </div>
+</div>
+
+<div id="guide-modal" class="modal">
+    <div class="modal-content">
+        <h2 style="color:#ccff00; margin-bottom:15px;">&#127881; 解锁成功</h2>
+        <p id="guide-content" style="line-height:1.6; color:#ddd;">加载干货中...</p>
+        <button class="modal-close" onclick="closeModal()">朕知道了</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            title: "1. 老板凌晨1点在群里发了句'大家都辛苦了'，你的反应？",
+            options: [
+                { text: "火速回复'老板更辛苦'并点赞", score: 10 },
+                { text: "假装睡着，第二天早上回个表情包", score: 5 },
+                { text: "直接开启消息免打扰，关机睡觉", score: 0 }
+            ]
+        },
+        {
+            title: "2. 如果下个月花呗/信用卡不用还了，你最想干嘛？",
+            options: [
+                { text: "马上辞职，在家躺三天三夜", score: 0 },
+                { text: "买那个看中很久的昂贵电子产品/包包", score: 8 },
+                { text: "存起来，继续上班，害怕失去收入", score: 10 }
+            ]
+        },
+        {
+            title: "3. 周五下班前，同级同事突然升职加薪了，你心里怎么想？",
+            options: [
+                { text: "完了，我成废物了，今晚必须加班补救", score: 10 },
+                { text: "酸了酸了，晚上吃顿好的发泄一下", score: 6 },
+                { text: "太好了，以后重活累活全是他的了", score: 0 }
+            ]
+        },
+        {
+            title: "4. 看你目前的存款，如果今天被开除，你能活多久？",
+            options: [
+                { text: "不到一个月，明天就得去送外卖", score: 2 },
+                { text: "勉强撑半年，每天吃泡面", score: 5 },
+                { text: "一年以上，甚至觉得是一种解脱", score: 10 }
+            ]
+        },
+        {
+            title: "5. 你对'婚姻'和'生娃'目前的真实态度是？",
+            options: [
+                { text: "还是得结，不然老了没人管多惨", score: 10 },
+                { text: "随缘吧，遇到合适的再说", score: 5 },
+                { text: "自己都养不活，坚决不制造新的牛马", score: 0 }
+            ]
+        },
+        {
+            title: "6. 休息日被拉去团建，玩'破冰游戏'时你在干嘛？",
+            options: [
+                { text: "积极表现，争取给领导留个好印象", score: 10 },
+                { text: "随大流跟着笑，心里默默翻白眼", score: 5 },
+                { text: "躲在最后一排玩手机，随时准备开溜", score: 0 }
+            ]
+        },
+        {
+            title: "7. 去看病，医生说你压力太大需要静养，你第一句话是？",
+            options: [
+                { text: "医生，能开病假条吗？带薪的那种", score: 5 },
+                { text: "医生，这个药进医保吗？", score: 0 },
+                { text: "那不行，我手里还有个项目没上线", score: 10 }
+            ]
+        },
+        {
+            title: "8. 朋友圈看到前任在马尔代夫度假，你的操作是？",
+            options: [
+                { text: "默默点赞，感叹自己命苦", score: 7 },
+                { text: "切，有什么了不起，赶紧屏蔽", score: 4 },
+                { text: "毫无波澜，甚至想问他机票多少钱", score: 0 }
+            ]
+        },
+        {
+            title: "9. 买东西时，你最常用的凑单借口是？",
+            options: [
+                { text: "差几块钱就满减了，不凑亏大了", score: 3 },
+                { text: "正好需要，多买点囤着", score: 7 },
+                { text: "老子今天高兴，千金难买我乐意", score: 10 }
+            ]
+        },
+        {
+            title: "10. 如果给你一个按钮，按下去马上获得500万但立刻老十岁，你按吗？",
+            options: [
+                { text: "不按，青春无价，我还想奋斗", score: 10 },
+                { text: "犹豫一下，按个半截拿250万行吗？", score: 5 },
+                { text: "别说老十岁，直接老到退休我都按！", score: 0 }
+            ]
+        }
+    ];
+
+    const cities = [
+        { name: "鹤岗", tag: "三万买房，灵魂归宿", desc: "以你这穷得响叮当的余额和彻底死心的态度，想去欧洲属于医学上的妄想症。这里两万买套房，剩下的钱足够你买两吨大白菜在暖气房里虚度光阴。", guide: "《鹤岗买房避坑指南：如何识别漏水的老破小》、《东北大白菜100种吃法》" },
+        { name: "曹县", tag: "宇宙中心，短视频要饭", desc: "宁睡曹县一张床，不买北上广一套房。你已经放弃了体面，建议直接去曹县开个直播，表演'当代青年才俊如何沦落至此'，说不定能靠打赏买盒饭。", guide: "《如何对着镜头哭诉你的悲惨半生》、《曹县汉服批发防骗手册》" },
+        { name: "铁岭", tag: "大城市梦碎回收站", desc: "宇宙的尽头是铁岭。你这种既不想干活又没钱的人，只有东北的炕头能接纳你。每天嗑瓜子看二人转，是你余生最剧烈的运动。", guide: "《如何成为村头情报交流中心的核心成员》" },
+        { name: "洛杉矶流浪汉帐篷", tag: "零成本物理出海", desc: "你已经穷到了连国都不配出的地步，但在精神上你极度渴望自由。洛杉矶街头的一个帐篷是你此生能触及的最高级北美房产，每天只需翻找垃圾桶就能解决温饱。", guide: "《如何与其他流浪汉争抢纸箱的底层逻辑》" },
+        { name: "泰国清迈", tag: "伪数字游民的庇护所", desc: "你根本不是真想躺平，你只是想逃离现在的PPT，顺便发几条喝着20泰铢冰咖啡的朋友圈装作'数字游民'。去吧，那里的阳光能暂时治愈你的虚荣心。", guide: "《如何在清迈咖啡馆用MacBook装作月入十万》、《防蚊虫叮咬玄学》" },
+        { name: "云南大理", tag: "拥挤的伤心者收容所", desc: "你觉得去大理能洗涤灵魂？别傻了，那里全是和你一样辞职后迷茫的失业人员。你只能在拥挤的酒吧里，听着走调的民谣流下贫穷的泪水。", guide: "《大理义工白嫖避坑指南》、《如何与民宿老板极限拉扯房租》" },
+        { name: "景德镇", tag: "假装手艺人的乌托邦", desc: "你在大城市卷不动了，妄想去景德镇捏个泥巴修身养性。结果去了才发现，那里的年轻人卷得连窑都烧不过来。你最终的宿命就是进货义乌的瓷器在夜市摆摊。", guide: "《如何把义乌货包装成手作艺术品卖给游客》" },
+        { name: "贵州榕江", tag: "下沉市场的精神股东", desc: "大城市的精致消费你高攀不起，村超的纯粹狂欢才是你的解药。你适合在那里买一碗五块钱的粉，坐在路边看着别人奔跑，假装自己也有青春。", guide: "《村超最佳观赛蹭饭位置图鉴》" },
+        { name: "威海", tag: "廉价海景房的最后尊严", desc: "你买不起三亚，又嫌弃北方没海。威海那套几十万的海景房是你最后的遮羞布。虽然冬天冷得像冰窖，但至少你发朋友圈可以带上'面朝大海'四个字。", guide: "《如何在零下十度的海风中保持微笑自拍》" },
+        { name: "泉州", tag: "把命运全交给神明", desc: "你的能力和欲望已经彻底断层，普通的努力救不了你。建议去泉州，三步一庙五步一堂，把你下半生的希望全寄托在烧香拜佛上，玄学是你唯一的出路。", guide: "《泉州神仙垂直领域拜神指南（求财专版）》" },
+        { name: "淄博", tag: "碳水与油脂的狂欢", desc: "你不想努力了，只想用高热量麻醉自己。淄博的小烤炉是你人生的缩影：看似热火朝天，其实就是在被别人反复炙烤。吃饱了就睡吧，梦里什么都有。", guide: "《如何优雅地抢夺最后一串五花肉》" },
+        { name: "延吉", tag: "冷面麻痹神经", desc: "你已经被生活折磨得失去了痛觉，只有延吉冰凉的冷面和重口味的泡菜能刺激你麻木的味蕾。在那里你是个毫无存在感的干饭机器。", guide: "《延吉碳水爆炸逃生路线》" },
+        { name: "俄罗斯奥伊米亚康", tag: "社交与物理的双重冬眠", desc: "常年零下50度。在这里，连吐口唾沫都会在半空中结冰，绝对不会有老板顺着网线来找你。这是物理层面上最彻底的社恐治疗基地。", guide: "《如何防止尿尿时结冰的生存必修课》" },
+        { name: "西藏墨脱", tag: "与世隔绝的终极隐身", desc: "中国最后一个通公路的县。你对人类已经彻底过敏，只想找个连快递都送不到的地方藏起来。在那里，哪怕你烂在被窝里，都没人催你交周报。", guide: "《如何在没有外卖的日子里防止饿死》" },
+        { name: "漠河", tag: "找不着北的流浪汉", desc: "你在职场上找不着北，不如直接去中国的最北端。在那片白雪皑皑里，你能深刻体会到什么叫'冻得连辞职的念头都僵硬了'。", guide: "《泼水成冰朋友圈点赞率提升秘籍》" },
+        { name: "梵蒂冈", tag: "等待天降神迹", desc: "你现在的精神状态极其美丽，已经完全脱离了唯物主义。建议直接搬去梵蒂冈，毕竟你现在唯一的翻盘机会就是天天祈祷上帝直接给你打钱。", guide: "《如何在一堆神父中假装自己很有信仰》" },
+        { name: "印度恒河", tag: "干了这碗恒河水，来生再做打工人", desc: "你对卫生和尊严已经没有要求了。去恒河边上找个台阶坐下，看着水面上漂浮的万物，你会觉得现在经历的这点降薪根本不叫事儿。", guide: "《肠胃免疫力史诗级强化训练》" },
+        { name: "日本歌舞伎町网吧", tag: "赛博朋克难民", desc: "你在国内卷废了，去日本也只能当个底层的'网吧难民'。在一个不到两平米的小格子里喝着免费饮料，看着漫画逃避现实，这是你为数不多的快乐。", guide: "《网吧免费饮料配比最佳口感指南》" },
+        { name: "太平洋某无名孤岛", tag: "荒岛余生", desc: "你的社交能量已清零。你适合像鲁滨逊一样去个鸟不拉屎的荒岛，每天的任务就是和排球说话。没有KPI，只有星期五。", guide: "《如何用椰子壳做一个不会漏水的碗》" },
+        { name: "火星基地", tag: "地球不配拥有你", desc: "你的奇葩程度和避世心理已经超出了碳基生物的范畴。建议联系马斯克，把你绑在火箭上发射去火星，那是你理所应当的归宿。", guide: "《火星种土豆的底层逻辑》" },
+        { name: "海南文昌", tag: "看火箭发射等死", desc: "你手里多少还有点积蓄，不想像穷鬼一样缩在东北。文昌的海风和椰子树能给你一丝体面。每天搬个小板凳看火箭发射，感叹自己这辈子是飞不起来了。", guide: "《如何在沙滩上抢占最佳看火箭机位》" },
+        { name: "攀枝花", tag: "芒果自由的夕阳红", desc: "你提前步入了老年生活，厌倦了北上广的阴霾。攀枝花的阳光和便宜的芒果是你余生的支柱，你已经提前二三十年过上了广场舞大妈向往的生活。", guide: "《分辨毒蘑菇与好芒果的一眼识破法》" },
+        { name: "义乌", tag: "睡在金币上的守财奴", desc: "你嘴上喊着躺平，其实心里还是放不下搞钱。在义乌，哪怕你躺在床上，周围全都是几分钱几毛钱的塑料商品，这种置身财富海洋的错觉让你无比安心。", guide: "《如何从一堆塑料废品中扒拉出爆款》" },
+        { name: "丹东", tag: "隔江相望的虚无", desc: "你手里有两闲钱，跑去边境城市天天望着对岸发呆。看着对面的毫无波澜，你油然而生一种优越感，以此来抚慰你在大城市被老板疯狂碾压的自尊心。", guide: "《丹东望远镜性价比选购指南》" },
+        { name: "新疆伊犁", tag: "假装在瑞士的大冤种", desc: "你去不起真瑞士，只能去个平替。在那里骑着马看着草原，假装自己是个放荡不羁的牧民。其实你背地里还在焦虑没信号收不到客户微信。", guide: "《如何假装自己有一片私人牧场》" },
+        { name: "朝鲜平壤", tag: "包分配的终极摆烂", desc: "你连每天吃什么都不想自己决定了。平壤最适合你，包吃包住包分配工作。不需要你做任何职业规划，上面让你干啥你干啥，彻底交出大脑的使用权。", guide: "《如何鼓掌才能显得最真诚》" },
+        { name: "冰岛雷克雅未克", tag: "昂贵的孤独", desc: "你有点臭钱，连躺平都要挑个最贵的、最有逼格的地方。在黑沙滩上吹着刺骨的妖风，思考着你卡里那几百万怎么花。你的孤独散发着金钱的酸臭味。", guide: "《如何在北极圈炫耀你的高端冲锋衣》" },
+        { name: "瑞士阿尔卑斯", tag: "需要被包养的巨婴", desc: "你不仅不想上班，还极度贪图享受。去瑞士滑雪泡温泉是你梦寐以求的躺平方式。问题是你那点工资连机票都买不起，你唯一的退路就是赶紧找个富婆/富豪包养你。", guide: "《阿尔卑斯山脉偶遇单身富豪实操手册》" },
+        { name: "迪拜", tag: "捡垃圾的致富梦", desc: "你满脑子都是一夜暴富。听说迪拜要饭都能月入百万，你恨不得马上买张机票去捡垃圾。你的躺平不是真躺，是想不劳而获，贪婪至极。", guide: "《迪拜哪条街的垃圾桶爆率最高》" },
+        { name: "肯尼亚马赛马拉", tag: "狂野的达尔文信徒", desc: "你骨子里是个狠人，觉得城市生活太无聊。你想去大草原看动物迁徙，甚至想和狮子肉搏。你不需要躺平，你需要的是生死边缘的刺激。", guide: "《跑赢猎豹的呼吸节奏调整法》" },
+        { name: "马尔代夫", tag: "末日狂欢", desc: "反正马上就要沉了，就像你那摇摇欲坠的职场生涯。你带上全部家当去挥霍最后一把，然后准备跳海。主打一个只要我死得快，穷神就追不上我。", guide: "《沉岛前的最后一次豪华自助抢食攻略》" },
+        { name: "你家卧室的床", tag: "无力反抗的社畜", desc: "别做梦了！算来算去，你发现自己连辞职的勇气都没有，更别提出去躺平。你唯一的退路，就是在周末的晚上死死抱住你家那张破床，流着泪调好周一早上的八个闹钟。", guide: "《如何高质量地睡一个不被打扰的午觉》" }
+    ];
+
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
+    let matchedCity = null;
+
+    const viewHome = document.getElementById('view-home');
+    const viewQuiz = document.getElementById('view-quiz');
+    const viewLoading = document.getElementById('view-loading');
+    const viewResult = document.getElementById('view-result');
+    const modal = document.getElementById('guide-modal');
+
+    function switchView(viewElement) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        viewElement.classList.add('active');
+    }
+
+    function startQuiz() {
+        totalScore = 0;
+        currentQuestionIndex = 0;
+        switchView(viewQuiz);
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            calculateResult();
+            return;
+        }
+        const q = questions[currentQuestionIndex];
+        document.getElementById('quiz-progress').innerText = (currentQuestionIndex + 1) + ' / ' + questions.length;
+        document.getElementById('quiz-title').innerText = q.title;
+        const optionsContainer = document.getElementById('quiz-options');
+        optionsContainer.innerHTML = '';
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => handleOptionClick(opt.score);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleOptionClick(score) {
+        totalScore += score;
+        currentQuestionIndex++;
+        setTimeout(() => { renderQuestion(); }, 150);
+    }
+
+    function calculateResult() {
+        switchView(viewLoading);
+        const msgs = ["正在扫描你的银行卡余额...", "正在评估你的抗压底线...", "正在向老板发送辞职信(假)..."];
+        let msgIndex = 0;
+        const msgInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % msgs.length;
+            document.getElementById('loading-msg').innerText = msgs[msgIndex];
+        }, 800);
+
+        setTimeout(() => {
+            clearInterval(msgInterval);
+            let index = Math.floor((totalScore / 100) * 31);
+            if (index < 0) index = 0;
+            if (index > 31) index = 31;
+            matchedCity = cities[index];
+            showResult();
+        }, 2500);
+    }
+
+    function showResult() {
+        document.getElementById('res-city').innerText = matchedCity.name;
+        document.getElementById('res-tag').innerText = matchedCity.tag;
+        document.getElementById('res-desc').innerText = matchedCity.desc;
+        document.getElementById('guide-content').innerText = '已为您解锁终极干货：' + matchedCity.guide + '。其实没啥用，明天该上班还得去上班，洗洗睡吧。';
+        const adBtn = document.getElementById('btn-ad-unlock');
+        adBtn.innerHTML = '&#128274; 看视频解锁《低成本苟活指南》';
+        adBtn.disabled = false;
+        adBtn.style.background = '#ff0055';
+        adBtn.style.display = '';
+        switchView(viewResult);
+    }
+
+    // 广点通激励视频 Mock
+    function watchAdToUnlock() {
+        const adBtn = document.getElementById('btn-ad-unlock');
+        adBtn.innerText = "⏳ 广告加载中...";
+        adBtn.disabled = true;
+        adBtn.style.background = '#555';
+        // TODO: 替换为真实广点通SDK调用
+        setTimeout(() => {
+            adBtn.style.display = 'none';
+            modal.style.display = 'block';
+        }, 2000);
+    }
+
+    function closeModal() { modal.style.display = 'none'; }
+
+    function shareResult() {
+        if (navigator.share) {
+            navigator.share({ title: '全球躺平退路规划局', text: '我的躺平退路是' + matchedCity.name + '！' + matchedCity.tag, url: location.href });
+        } else {
+            alert("长按屏幕截图，发给你的同事们一起躺！");
+        }
+    }
+</script>
+</body>
+</html>
