@@ -4,26 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>全球躺平退路规划局</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
 :root{
   --brand:#FFD100;--brand-dark:#E6BC00;--orange:#FF9500;
   --bg:#FFF8E1;--card:#FFFFFF;--title:#111;--body:#333;--sub:#888;
-  --success:#16A34A;--error:#EF4444;--border:#EAEAEA;
+  --border:#EAEAEA;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--title);overflow-x:hidden;padding-bottom:70px}
-.container{max-width:600px;margin:0 auto;min-height:100vh;padding:20px 20px 80px}
+.container{max-width:600px;margin:0 auto;min-height:100vh;padding:20px 20px 80px;display:flex;flex-direction:column}
 
-.view{display:none;width:100%;flex-direction:column;min-height:75vh}
+.view{display:none;width:100%;flex:1;flex-direction:column;justify-content:center}
 .view.active{display:flex;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── 首页 ── */
-.home-hero{text-align:center;padding:40px 0 20px}
+.home-hero{text-align:center;padding:20px 0}
 .home-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .title-huge{font-size:2.2rem;font-weight:900;line-height:1.3;margin-bottom:12px;color:var(--title)}
-.title-huge .hl{color:var(--orange);position:relative}
+.title-huge .hl{color:var(--orange)}
 .subtitle{font-size:.95rem;color:var(--sub);margin-bottom:30px;line-height:1.6;padding:0 10px}
 .warning-box{background:#FFF3E0;border:2px solid var(--orange);border-radius:12px;padding:12px 16px;margin-bottom:30px;font-size:.9rem;color:#E65100;font-weight:600;text-align:center}
 .btn-start{
@@ -33,15 +34,15 @@ body{background:var(--bg);color:var(--title);overflow-x:hidden;padding-bottom:70
   box-shadow:0 4px 0 #A07E00,0 6px 15px rgba(0,0,0,.15);
   transition:all .1s;position:relative;top:0;
 }
-.btn-start:active{top:3px;box-shadow:0 1px 0 #A07E00,0 2px 5px rgba(0,0,0,.1)}
+.btn-start:active{top:3px;box-shadow:0 1px 0 #A07E00}
 
 /* ── 答题 ── */
 .quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .progress-bar{flex:1;height:10px;background:#EEE;border-radius:5px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--orange));border-radius:5px;transition:width .3s ease}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--orange));border-radius:5px;transition:width .3s}
 .progress-text{font-weight:700;color:var(--orange);font-size:.9rem;white-space:nowrap}
 .q-card{background:var(--card);border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--border)}
-.q-title{font-size:1.2rem;font-weight:800;line-height:1.5;margin-bottom:20px;color:var(--title)}
+.q-title{font-size:1.15rem;font-weight:800;line-height:1.5;margin-bottom:20px;color:var(--title)}
 .opt-btn{
   display:block;width:100%;text-align:left;background:#FAFAFA;
   border:2px solid var(--border);border-radius:12px;padding:14px 16px;
@@ -49,88 +50,67 @@ body{background:var(--bg);color:var(--title);overflow-x:hidden;padding-bottom:70
   transition:all .15s;line-height:1.4;
 }
 .opt-btn:hover{border-color:var(--brand);background:#FFFDE7}
-.opt-btn:active{background:var(--brand);border-color:var(--brand-dark);color:var(--title);transform:scale(.98)}
+.opt-btn:active{background:var(--brand);border-color:var(--brand-dark);transform:scale(.98)}
 
 /* ── 加载 ── */
-.loading-wrap{text-align:center;padding-top:30vh}
+.loading-wrap{text-align:center}
 .loading-spinner{width:60px;height:60px;border:5px solid #EEE;border-top:5px solid var(--orange);border-radius:50%;margin:0 auto 24px;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-msg{font-size:1.1rem;font-weight:700;color:var(--body);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.3}}
 
-/* ── 结果 ── */
-.result-wrap{text-align:center}
-.result-label{font-size:.9rem;color:var(--sub);margin-bottom:8px}
-.result-city{font-size:3rem;font-weight:900;color:var(--title);margin-bottom:8px}
-.result-tag{display:inline-block;background:var(--orange);color:#fff;padding:4px 14px;border-radius:20px;font-weight:700;font-size:.9rem;margin-bottom:20px}
-.result-card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--border);text-align:left;margin-bottom:24px}
-.result-desc{font-size:1.05rem;line-height:1.7;color:var(--body);border-left:4px solid var(--orange);padding-left:14px}
-.result-quote{margin-top:16px;font-size:.85rem;color:var(--sub);font-style:italic;text-align:right}
-.action-row{display:flex;gap:10px;margin-bottom:12px}
-.btn-share{
+/* ── 结果页 = 直接就是海报 ── */
+.result-poster-wrap{text-align:center}
+.poster-img{width:100%;max-width:400px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.15);margin-bottom:16px}
+.result-tip{font-size:.85rem;color:var(--sub);margin-bottom:20px}
+.action-row{display:flex;gap:10px}
+.btn-again{
   flex:1;background:linear-gradient(180deg,#FFE352,var(--brand));color:var(--title);
   font-weight:800;border:2px solid #B89000;border-radius:12px;padding:14px;
   font-size:1rem;cursor:pointer;box-shadow:0 3px 0 #A07E00;
 }
-.btn-share:active{box-shadow:none;transform:translateY(2px)}
-.btn-again{
-  flex:1;background:var(--card);color:var(--body);font-weight:600;
-  border:2px solid var(--border);border-radius:12px;padding:14px;
-  font-size:1rem;cursor:pointer;
-}
-.btn-again:hover{border-color:var(--brand)}
+.btn-again:active{box-shadow:none;transform:translateY(2px)}
 
 /* ── 底部广告位 ── */
 .ad-banner{
   position:fixed;bottom:0;left:0;right:0;height:60px;
   background:#F5F5F5;border-top:1px solid #DDD;
-  display:flex;align-items:center;justify-content:center;
-  z-index:50;
+  display:flex;align-items:center;justify-content:center;z-index:50;
 }
 .ad-placeholder{color:#AAA;font-size:.8rem;letter-spacing:1px}
 .ad-tag{position:absolute;top:4px;right:8px;font-size:10px;color:#CCC;background:#F0F0F0;padding:1px 6px;border-radius:3px}
 
-/* ── 海报弹窗 ── */
-.poster-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:200;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.poster-overlay.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
-.poster-container{max-width:360px;width:100%;position:relative}
-.poster-canvas-wrap{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4)}
-.poster-canvas-wrap canvas{display:block;width:100%;height:auto}
-.poster-tip{color:#fff;font-size:.85rem;text-align:center;margin-top:16px;opacity:.7}
-.poster-close{position:absolute;top:-40px;right:0;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;padding:8px}
-
-/* ── 补充动画 ── */
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.slide-up{animation:slideUp .5s ease}
+/* ── 隐藏canvas ── */
+#posterCanvas{display:none}
 </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- ═══ 首页 ═══ -->
+  <!-- 首页 -->
   <div id="view-home" class="view active">
     <div class="home-hero">
-      <div class="home-emoji">&#127758;</div>
+      <div class="home-emoji">🌍</div>
       <h1 class="title-huge">全球躺平<br><span class="hl">退路规划局</span></h1>
       <p class="subtitle">全网都在教你怎么卷<br>我们只关心你还能退到哪</p>
     </div>
-    <div class="warning-box">&#9888;&#65039; 结果极其扎心，玻璃心勿入</div>
-    <button class="btn-start" onclick="startQuiz()">&#128073; 测测你的财力配去哪躺</button>
+    <div class="warning-box">⚠️ 结果极其扎心，玻璃心勿入</div>
+    <button class="btn-start" onclick="startQuiz()">👉 测测你的财力配去哪躺</button>
   </div>
 
-  <!-- ═══ 答题 ═══ -->
+  <!-- 答题 -->
   <div id="view-quiz" class="view">
     <div class="quiz-header">
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
       <div class="progress-text" id="progressText">1/10</div>
     </div>
     <div class="q-card">
-      <div class="q-title" id="qTitle">题目加载中...</div>
+      <div class="q-title" id="qTitle"></div>
       <div id="qOptions"></div>
     </div>
   </div>
 
-  <!-- ═══ 加载 ═══ -->
+  <!-- 加载 -->
   <div id="view-loading" class="view">
     <div class="loading-wrap">
       <div class="loading-spinner"></div>
@@ -138,20 +118,13 @@ body{background:var(--bg);color:var(--title);overflow-x:hidden;padding-bottom:70
     </div>
   </div>
 
-  <!-- ═══ 结果 ═══ -->
+  <!-- 结果 = 直接展示海报图片 -->
   <div id="view-result" class="view">
-    <div class="result-wrap slide-up">
-      <p class="result-label">&#128202; 经过无情的大数据分析</p>
-      <p class="result-label">最适合你的退路是 ——</p>
-      <h1 class="result-city" id="resCity">鹤岗</h1>
-      <div><span class="result-tag" id="resTag">灵魂归宿</span></div>
-      <div class="result-card">
-        <p class="result-desc" id="resDesc">文案加载中...</p>
-        <p class="result-quote" id="resQuote"></p>
-      </div>
+    <div class="result-poster-wrap">
+      <img id="posterImg" class="poster-img" src="" alt="你的退路鉴定报告"/>
+      <p class="result-tip">👆 长按图片保存，发给同事一起测</p>
       <div class="action-row">
-        <button class="btn-share" onclick="generatePoster()">&#127912; 生成海报发同事</button>
-        <button class="btn-again" onclick="location.reload()">&#128260; 再测一次</button>
+        <button class="btn-again" onclick="location.reload()">🔄 换个姿势再测一次</button>
       </div>
     </div>
   </div>
@@ -161,119 +134,104 @@ body{background:var(--bg);color:var(--title);overflow-x:hidden;padding-bottom:70
 <div class="ad-banner">
   <span class="ad-tag">广告</span>
   <span class="ad-placeholder">— 广告位招租 —</span>
-  <!-- TODO: 替换为广点通 Banner SDK -->
 </div>
 
-<!-- 海报弹窗 -->
-<div class="poster-overlay" id="posterOverlay">
-  <div class="poster-container">
-    <button class="poster-close" onclick="closePoster()">&#10005;</button>
-    <div class="poster-canvas-wrap">
-      <canvas id="posterCanvas" width="720" height="1280"></canvas>
-    </div>
-    <p class="poster-tip">&#128071; 长按图片保存，发给你的同事们一起测</p>
-  </div>
-</div>
+<canvas id="posterCanvas"></canvas>
 
 <script>
-// ══════════════════════════════════════
-// 题库
-// ══════════════════════════════════════
+// ══════ 题库 ══════
 const questions = [
   { title: "老板凌晨1点在群里发了句「大家都辛苦了」，你的反应？", options: [
-    { text: "&#128248; 火速回复「老板更辛苦」并点赞三连", score: 10 },
-    { text: "&#128564; 假装睡着，第二天早上回个表情包", score: 5 },
-    { text: "&#128263; 直接免打扰，关机睡觉，爱谁谁", score: 0 }
+    { text: "📸 火速回复「老板更辛苦」并点赞三连", score: 10 },
+    { text: "😴 假装睡着，第二天早上回个表情包", score: 5 },
+    { text: "🔇 直接免打扰，关机睡觉，爱谁谁", score: 0 }
   ]},
   { title: "如果下个月花呗信用卡全免了，你第一件事干嘛？", options: [
-    { text: "&#128587; 秒辞，在家躺三天三夜不下床", score: 0 },
-    { text: "&#128722; 买那个看了仨月的电子产品/包包", score: 8 },
-    { text: "&#128176; 存起来继续上班，不敢没有收入", score: 10 }
+    { text: "🙋 秒辞，在家躺三天三夜不下床", score: 0 },
+    { text: "🛒 买那个看了仨月的电子产品/包包", score: 8 },
+    { text: "💰 存起来继续上班，不敢没有收入", score: 10 }
   ]},
   { title: "周五下班前，同级同事突然升职加薪了，你？", options: [
-    { text: "&#128561; 完了，今晚必须加班补救", score: 10 },
-    { text: "&#128557; 酸了，晚上吃顿好的发泄一下", score: 6 },
-    { text: "&#129395; 太好了，以后重活全是他的", score: 0 }
+    { text: "😱 完了，今晚必须加班补救", score: 10 },
+    { text: "😭 酸了，晚上吃顿好的发泄一下", score: 6 },
+    { text: "🤣 太好了，以后重活全是他的", score: 0 }
   ]},
   { title: "以你目前的存款，今天被开除能活多久？", options: [
-    { text: "&#128531; 不到一个月，明天就去送外卖", score: 2 },
-    { text: "&#129300; 勉强撑半年，天天吃泡面", score: 5 },
-    { text: "&#128526; 一年以上，甚至觉得是解脱", score: 10 }
+    { text: "😓 不到一个月，明天就去送外卖", score: 2 },
+    { text: "🤔 勉强撑半年，天天吃泡面", score: 5 },
+    { text: "😎 一年以上，甚至觉得是解脱", score: 10 }
   ]},
   { title: "你对「结婚生娃」目前的真实态度？", options: [
-    { text: "&#128141; 还是得结，老了没人管多惨", score: 10 },
-    { text: "&#129335; 随缘吧，遇到合适的再说", score: 5 },
-    { text: "&#128581; 自己都养不活，坚决不造新牛马", score: 0 }
+    { text: "💍 还是得结，老了没人管多惨", score: 10 },
+    { text: "🤷 随缘吧，遇到合适的再说", score: 5 },
+    { text: "🙅 自己都养不活，坚决不造新牛马", score: 0 }
   ]},
   { title: "休息日被拉去团建，玩「破冰游戏」时你在？", options: [
-    { text: "&#127941; 积极表现，争取给领导留好印象", score: 10 },
-    { text: "&#128580; 随大流跟着笑，心里疯狂翻白眼", score: 5 },
-    { text: "&#128241; 躲最后一排玩手机，随时准备开溜", score: 0 }
+    { text: "🏆 积极表现，争取给领导留好印象", score: 10 },
+    { text: "🙄 随大流跟着笑，心里疯狂翻白眼", score: 5 },
+    { text: "📱 躲最后一排玩手机，随时准备开溜", score: 0 }
   ]},
   { title: "去看病，医生说你压力太大需要静养，你说？", options: [
-    { text: "&#128203; 医生能开病假条吗？带薪的那种", score: 5 },
-    { text: "&#128176; 这个药进医保吗？", score: 0 },
-    { text: "&#128187; 不行，手里还有个项目没上线", score: 10 }
+    { text: "📋 医生能开病假条吗？带薪的那种", score: 5 },
+    { text: "💰 这个药进医保吗？", score: 0 },
+    { text: "💻 不行，手里还有个项目没上线", score: 10 }
   ]},
   { title: "朋友圈看到前任在马尔代夫度假，你？", options: [
-    { text: "&#128546; 默默点赞，感叹自己命苦", score: 7 },
-    { text: "&#128545; 有什么了不起，赶紧屏蔽", score: 4 },
-    { text: "&#129488; 毫无波澜，想问他机票多少钱", score: 0 }
+    { text: "😢 默默点赞，感叹自己命苦", score: 7 },
+    { text: "😡 有什么了不起，赶紧屏蔽", score: 4 },
+    { text: "🧐 毫无波澜，想问他机票多少钱", score: 0 }
   ]},
   { title: "买东西凑单时，你最常用的借口？", options: [
-    { text: "&#128184; 差几块满减了，不凑就亏大了", score: 3 },
-    { text: "&#128230; 正好需要，多买点囤着", score: 7 },
-    { text: "&#128526; 老子今天高兴，千金难买爷乐意", score: 10 }
+    { text: "💸 差几块满减了，不凑就亏大了", score: 3 },
+    { text: "📦 正好需要，多买点囤着", score: 7 },
+    { text: "😎 老子今天高兴，千金难买爷乐意", score: 10 }
   ]},
   { title: "一个按钮：按下获得500万但立刻老十岁，你？", options: [
-    { text: "&#128170; 不按，青春无价，我还要奋斗", score: 10 },
-    { text: "&#129300; 按个半截拿250万行吗？", score: 5 },
-    { text: "&#128165; 别说老十岁，直接老到退休我都按！", score: 0 }
+    { text: "💪 不按，青春无价，我还要奋斗", score: 10 },
+    { text: "🤔 按个半截拿250万行吗？", score: 5 },
+    { text: "💥 别说老十岁，直接老到退休我都按！", score: 0 }
   ]}
 ];
 
-// ══════════════════════════════════════
-// 32个城市结果 + 毒鸡汤金句
-// ══════════════════════════════════════
+// ══════ 32个城市 ══════
 const cities = [
-  { name:"鹤岗", emoji:"&#127959;", tag:"三万买房 灵魂归宿", desc:"以你这穷得响叮当的余额和彻底死心的态度，想去欧洲属于医学上的妄想症。这里两万买套房，剩下的钱足够你买两吨大白菜在暖气房里虚度光阴。", quote:"人生如梦，梦醒了还得还花呗。", color:["#2196F3","#0D47A1"], guide:"鹤岗买房避坑指南 + 东北大白菜100种吃法" },
-  { name:"曹县", emoji:"&#127911;", tag:"宇宙中心 直播要饭", desc:"宁睡曹县一张床，不买北上广一套房。你已经放弃了体面，建议直接去曹县开个直播，表演「当代青年才俊如何沦落至此」，说不定能靠打赏买盒饭。", quote:"梦想还是要有的，万一它自己实现了呢。", color:["#E91E63","#880E4F"], guide:"对着镜头哭诉的表演课 + 汉服批发防骗指南" },
-  { name:"铁岭", emoji:"&#127916;", tag:"大城市梦碎回收站", desc:"宇宙的尽头是铁岭。你这种既不想干活又没钱的人，只有东北的炕头能接纳你。每天嗑瓜子看二人转，是你余生最剧烈的运动。", quote:"我没有梦想，但我有暖气。", color:["#607D8B","#37474F"], guide:"如何成为村头情报中心核心成员" },
-  { name:"洛杉矶帐篷", emoji:"&#9978;", tag:"零成本物理出海", desc:"你已经穷到连国都不配出了，但精神上极度渴望自由。洛杉矶街头的帐篷是你此生能触及的最高级北美房产，每天翻垃圾桶就能解决温饱。", quote:"自由的代价是居无定所。", color:["#795548","#3E2723"], guide:"与其他流浪汉争抢纸箱的底层逻辑" },
-  { name:"泰国清迈", emoji:"&#127796;", tag:"伪数字游民庇护所", desc:"你不是真想躺平，只是想逃离PPT，顺便发条喝20泰铢冰咖啡的朋友圈装「数字游民」。去吧，那里的阳光能暂时治愈你的虚荣心。", quote:"逃避虽可耻但超级有用。", color:["#FF9800","#E65100"], guide:"在清迈咖啡馆用MacBook装月入十万" },
-  { name:"云南大理", emoji:"&#127800;", tag:"拥挤的伤心者收容所", desc:"你觉得去大理能洗涤灵魂？别傻了，那里全是和你一样辞职后迷茫的失业人员。你只能在拥挤的酒吧里，听着走调的民谣流下贫穷的泪水。", quote:"诗和远方的前提是钱和假期。", color:["#9C27B0","#4A148C"], guide:"大理义工白嫖指南 + 极限拉扯房租" },
-  { name:"景德镇", emoji:"&#127861;", tag:"假装手艺人的乌托邦", desc:"你在大城市卷不动了，妄想去景德镇捏泥巴修身养性。去了才发现那里的年轻人卷得连窑都烧不过来。你的宿命是进货义乌瓷器在夜市摆摊。", quote:"手作的灵魂，义乌的价格。", color:["#8D6E63","#4E342E"], guide:"把义乌货包装成手作艺术品卖游客" },
-  { name:"贵州榕江", emoji:"&#9917;", tag:"下沉市场精神股东", desc:"大城市精致消费你高攀不起，村超的纯粹狂欢才是你的解药。你适合在那里买碗五块钱的粉，坐路边看别人奔跑，假装自己也有青春。", quote:"看别人奔跑也是一种运动。", color:["#4CAF50","#1B5E20"], guide:"村超最佳蹭饭位置图鉴" },
-  { name:"威海", emoji:"&#127754;", tag:"廉价海景房最后尊严", desc:"你买不起三亚又嫌北方没海。威海几十万的海景房是你最后的遮羞布。虽然冬天冷得像冰窖，但至少朋友圈能带上「面朝大海」四个字。", quote:"面朝大海，冻成冰雕。", color:["#00BCD4","#006064"], guide:"零下十度海风中保持微笑自拍指南" },
-  { name:"泉州", emoji:"&#128591;", tag:"把命运交给神明", desc:"你的能力和欲望已彻底断层，普通的努力救不了你。建议去泉州三步一庙五步一堂，把下半生希望全寄托在烧香拜佛上，玄学是你唯一的出路。", quote:"科学解决不了的事，就交给玄学吧。", color:["#F44336","#B71C1C"], guide:"泉州神仙垂直领域拜神指南（求财版）" },
-  { name:"淄博", emoji:"&#127830;", tag:"碳水油脂的狂欢", desc:"你不想努力了，只想用高热量麻醉自己。淄博小烤炉是你人生缩影：看似热火朝天，其实就是在被别人反复炙烤。吃饱就睡吧，梦里什么都有。", quote:"撸串治百病，啤酒解千愁。", color:["#FF5722","#BF360C"], guide:"优雅抢夺最后一串五花肉" },
-  { name:"延吉", emoji:"&#127836;", tag:"冷面麻痹神经", desc:"你被生活折磨得失去了痛觉，只有延吉冰凉的冷面和重口味泡菜能刺激你麻木的味蕾。在那里你是个毫无存在感的干饭机器。", quote:"辣到流泪不丢人，工资到账才催泪。", color:["#E91E63","#AD1457"], guide:"延吉碳水爆炸逃生路线" },
-  { name:"奥伊米亚康", emoji:"&#10052;", tag:"社交与物理双重冬眠", desc:"常年零下50度。在这里连吐口唾沫都会半空结冰，绝对不会有老板顺着网线来找你。这是物理层面最彻底的社恐治疗基地。", quote:"冷到连思念都能冻住。", color:["#90CAF9","#1565C0"], guide:"如何防止尿尿时结冰生存必修课" },
-  { name:"西藏墨脱", emoji:"&#127956;", tag:"与世隔绝终极隐身", desc:"中国最后一个通公路的县。你对人类已彻底过敏，只想找个连快递都送不到的地方。在那里哪怕你烂在被窝里，都没人催你交周报。", quote:"快递到不了的地方，老板也到不了。", color:["#4CAF50","#2E7D32"], guide:"没有外卖的日子怎么防止饿死" },
-  { name:"漠河", emoji:"&#127776;", tag:"找不着北的流浪汉", desc:"你在职场上找不着北，不如直接去中国最北端。在白雪皑皑里，你能深刻体会什么叫「冻得连辞职的念头都僵硬了」。", quote:"人生如北极光，可遇不可求，主要是太冷。", color:["#3F51B5","#1A237E"], guide:"泼水成冰朋友圈点赞率提升秘籍" },
-  { name:"梵蒂冈", emoji:"&#9962;", tag:"等待天降神迹", desc:"你的精神状态已完全脱离唯物主义。建议直接搬去梵蒂冈，毕竟你现在唯一的翻盘机会就是天天祈祷上帝直接给你打钱。", quote:"信则灵，不信则穷。", color:["#FFC107","#F57F17"], guide:"在一堆神父中假装很有信仰" },
-  { name:"印度恒河", emoji:"&#128752;", tag:"干了这碗恒河水", desc:"你对卫生和尊严已没要求了。去恒河边坐下，看着水面上漂浮的万物，你会觉得现在经历的这点降薪根本不叫事儿。", quote:"没有什么烦恼是拉一次肚子解决不了的。", color:["#FF9800","#E65100"], guide:"肠胃免疫力史诗级强化训练" },
-  { name:"歌舞伎町网吧", emoji:"&#127918;", tag:"赛博朋克难民", desc:"你在国内卷废了，去日本也只能当底层「网吧难民」。在不到两平米小格子里喝免费饮料看漫画逃避现实，这是你为数不多的快乐。", quote:"两平米的自由也是自由。", color:["#7B1FA2","#4A148C"], guide:"网吧免费饮料最佳配比口感指南" },
-  { name:"太平洋孤岛", emoji:"&#127965;", tag:"荒岛余生", desc:"你的社交能量已清零。你适合像鲁滨逊一样去个鸟不拉屎的荒岛，每天跟排球说话。没有KPI，只有星期五。", quote:"孤独是一种奢侈品，前提是你买得起船票。", color:["#009688","#004D40"], guide:"用椰子壳做不漏水碗的教程" },
-  { name:"火星基地", emoji:"&#128640;", tag:"地球不配拥有你", desc:"你的奇葩程度已超出碳基生物范畴。建议联系马斯克把你绑火箭上发射去火星，那是你理所应当的归宿。", quote:"地球危险，火星更危险，但没有领导。", color:["#F44336","#B71C1C"], guide:"火星种土豆的底层逻辑" },
-  { name:"海南文昌", emoji:"&#128171;", tag:"看火箭发射等退休", desc:"你多少还有点积蓄，不想像穷鬼一样缩在东北。文昌海风和椰子树能给你一丝体面。每天搬小板凳看火箭发射，感叹自己这辈子是飞不起来了。", quote:"别人上天，你坐地上看。", color:["#00BCD4","#00838F"], guide:"沙滩最佳看火箭机位攻略" },
-  { name:"攀枝花", emoji:"&#129389;", tag:"芒果自由的夕阳红", desc:"你提前步入了老年生活，厌倦了北上广的阴霾。攀枝花的阳光和便宜芒果是你余生的支柱，你已提前三十年过上了广场舞大妈向往的生活。", quote:"在别人奋斗的年纪选择了养生。", color:["#FF9800","#EF6C00"], guide:"分辨毒蘑菇与好芒果的一眼识破法" },
-  { name:"义乌", emoji:"&#128181;", tag:"睡在金币上的守财奴", desc:"你嘴上喊躺平，心里放不下搞钱。在义乌哪怕躺在床上，周围全是几分钱几毛钱的塑料商品，这种置身财富海洋的错觉让你无比安心。", quote:"躺平是不可能躺平的，这辈子都不可能。", color:["#FFC107","#FF6F00"], guide:"从塑料废品中扒拉出爆款" },
-  { name:"丹东", emoji:"&#128065;", tag:"隔江相望的虚无", desc:"你手里有两闲钱，跑去边境城市天天望着对岸发呆。看着对面毫无波澜，你油然而生一种优越感，以此抚慰你在大城市被老板碾压的自尊心。", quote:"望向对岸才知道，自己还行。", color:["#78909C","#37474F"], guide:"丹东望远镜性价比选购指南" },
-  { name:"新疆伊犁", emoji:"&#128014;", tag:"假装在瑞士的大冤种", desc:"你去不起真瑞士只能去平替。在那里骑着马看草原，假装自己是放荡不羁的牧民。其实背地里焦虑没信号收不到客户微信。", quote:"风景再美，也美不过甲方的催促。", color:["#66BB6A","#2E7D32"], guide:"假装有一片私人牧场" },
-  { name:"平壤", emoji:"&#128100;", tag:"包分配终极摆烂", desc:"你连每天吃什么都不想自己决定了。平壤最适合你，包吃包住包分配工作。不需要职业规划，上面让你干啥你干啥，彻底交出大脑使用权。", quote:"不用做选择就不会选错。", color:["#F44336","#C62828"], guide:"如何鼓掌才能显得最真诚" },
-  { name:"冰岛", emoji:"&#129430;", tag:"昂贵的孤独", desc:"你有点臭钱，连躺平都要挑最贵最有逼格的地方。在黑沙滩吹着刺骨妖风，思考卡里那几百万怎么花。你的孤独散发着金钱的酸臭味。", quote:"有钱人的烦恼你想象不到。", color:["#455A64","#263238"], guide:"北极圈炫耀高端冲锋衣指南" },
-  { name:"瑞士阿尔卑斯", emoji:"&#9968;", tag:"需要被包养的巨婴", desc:"你不仅不想上班还极度贪图享受。去瑞士滑雪泡温泉是你梦寐以求的躺平方式。问题是你那点工资连机票都买不起，唯一出路是找个富婆包养你。", quote:"梦想不用花钱，去瑞士要。", color:["#42A5F5","#1565C0"], guide:"阿尔卑斯偶遇单身富豪实操手册" },
-  { name:"迪拜", emoji:"&#128142;", tag:"捡垃圾的致富梦", desc:"你满脑子一夜暴富。听说迪拜要饭月入百万，恨不得马上买机票去捡垃圾。你的躺平不是真躺，是想不劳而获，贪婪至极。", quote:"迪拜的垃圾桶比你家客厅都大。", color:["#FFC107","#F57F17"], guide:"迪拜哪条街垃圾桶爆率最高" },
-  { name:"马赛马拉", emoji:"&#129409;", tag:"狂野的达尔文信徒", desc:"你骨子里是个狠人，觉得城市生活太无聊。想去大草原看动物迁徙，甚至想和狮子肉搏。你不需要躺平，你需要的是生死边缘的刺激。", quote:"在非洲草原上，KPI就是活着。", color:["#8D6E63","#4E342E"], guide:"跑赢猎豹的呼吸节奏调整法" },
-  { name:"马尔代夫", emoji:"&#127754;", tag:"末日狂欢", desc:"反正马上就要沉了，就像你那摇摇欲坠的职场生涯。你带上全部家当挥霍最后一把。主打一个只要我花得快，穷神就追不上我。", quote:"今朝有酒今朝醉，明天的事明天废。", color:["#26C6DA","#00838F"], guide:"沉岛前最后一次豪华自助抢食攻略" },
-  { name:"你家卧室的床", emoji:"&#128716;", tag:"无力反抗的终极社畜", desc:"别做梦了！算来算去你发现自己连辞职的勇气都没有，更别提出去躺平。你唯一的退路就是在周末晚上死死抱住你家那张破床，流着泪调好周一八个闹钟。", quote:"闹钟响了，梦就碎了。", color:["#9E9E9E","#424242"], guide:"如何高质量睡一个不被打扰的午觉" }
+  { name:"鹤岗", emoji:"🏗", tag:"三万买房 灵魂归宿", desc:"以你这穷得响叮当的余额和彻底死心的态度，想去欧洲属于医学上的妄想症。这里两万买套房，剩下的钱足够你买两吨大白菜在暖气房里虚度光阴。", quote:"人生如梦，梦醒了还得还花呗。", color:["#2196F3","#0D47A1"] },
+  { name:"曹县", emoji:"🎧", tag:"宇宙中心 直播要饭", desc:"宁睡曹县一张床，不买北上广一套房。你已经放弃了体面，建议直接去曹县开个直播，表演「当代青年才俊如何沦落至此」，说不定能靠打赏买盒饭。", quote:"梦想还是要有的，万一它自己实现了呢。", color:["#E91E63","#880E4F"] },
+  { name:"铁岭", emoji:"🎬", tag:"大城市梦碎回收站", desc:"宇宙的尽头是铁岭。你这种既不想干活又没钱的人，只有东北的炕头能接纳你。每天嗑瓜子看二人转，是你余生最剧烈的运动。", quote:"我没有梦想，但我有暖气。", color:["#607D8B","#37474F"] },
+  { name:"洛杉矶帐篷", emoji:"⛺", tag:"零成本物理出海", desc:"你已经穷到连国都不配出了，但精神上极度渴望自由。洛杉矶街头的帐篷是你此生能触及的最高级北美房产，每天翻垃圾桶就能解决温饱。", quote:"自由的代价是居无定所。", color:["#795548","#3E2723"] },
+  { name:"泰国清迈", emoji:"🌴", tag:"伪数字游民庇护所", desc:"你不是真想躺平，只是想逃离PPT，顺便发条喝20泰铢冰咖啡的朋友圈装「数字游民」。去吧，那里的阳光能暂时治愈你的虚荣心。", quote:"逃避虽可耻但超级有用。", color:["#FF9800","#E65100"] },
+  { name:"云南大理", emoji:"🌸", tag:"拥挤的伤心者收容所", desc:"你觉得去大理能洗涤灵魂？别傻了，那里全是和你一样辞职后迷茫的失业人员。你只能在拥挤的酒吧里，听着走调的民谣流下贫穷的泪水。", quote:"诗和远方的前提是钱和假期。", color:["#9C27B0","#4A148C"] },
+  { name:"景德镇", emoji:"🍵", tag:"假装手艺人的乌托邦", desc:"你在大城市卷不动了，妄想去景德镇捏泥巴修身养性。去了才发现那里的年轻人卷得连窑都烧不过来。你的宿命是进货义乌瓷器在夜市摆摊。", quote:"手作的灵魂，义乌的价格。", color:["#8D6E63","#4E342E"] },
+  { name:"贵州榕江", emoji:"⚽", tag:"下沉市场精神股东", desc:"大城市精致消费你高攀不起，村超的纯粹狂欢才是你的解药。你适合在那里买碗五块钱的粉，坐路边看别人奔跑，假装自己也有青春。", quote:"看别人奔跑也是一种运动。", color:["#4CAF50","#1B5E20"] },
+  { name:"威海", emoji:"🌊", tag:"廉价海景房最后尊严", desc:"你买不起三亚又嫌北方没海。威海几十万的海景房是你最后的遮羞布。虽然冬天冷得像冰窖，但至少朋友圈能带上「面朝大海」四个字。", quote:"面朝大海，冻成冰雕。", color:["#00BCD4","#006064"] },
+  { name:"泉州", emoji:"🙏", tag:"把命运交给神明", desc:"你的能力和欲望已彻底断层，普通的努力救不了你。建议去泉州三步一庙五步一堂，把下半生希望全寄托在烧香拜佛上，玄学是你唯一的出路。", quote:"科学解决不了的事，就交给玄学吧。", color:["#F44336","#B71C1C"] },
+  { name:"淄博", emoji:"🍖", tag:"碳水油脂的狂欢", desc:"你不想努力了，只想用高热量麻醉自己。淄博小烤炉是你人生缩影：看似热火朝天，其实就是在被别人反复炙烤。吃饱就睡吧，梦里什么都有。", quote:"撸串治百病，啤酒解千愁。", color:["#FF5722","#BF360C"] },
+  { name:"延吉", emoji:"🍜", tag:"冷面麻痹神经", desc:"你被生活折磨得失去了痛觉，只有延吉冰凉的冷面和重口味泡菜能刺激你麻木的味蕾。在那里你是个毫无存在感的干饭机器。", quote:"辣到流泪不丢人，工资到账才催泪。", color:["#E91E63","#AD1457"] },
+  { name:"奥伊米亚康", emoji:"❄", tag:"社交与物理双重冬眠", desc:"常年零下50度。在这里连吐口唾沫都会半空结冰，绝对不会有老板顺着网线来找你。这是物理层面最彻底的社恐治疗基地。", quote:"冷到连思念都能冻住。", color:["#90CAF9","#1565C0"] },
+  { name:"西藏墨脱", emoji:"🏔", tag:"与世隔绝终极隐身", desc:"中国最后一个通公路的县。你对人类已彻底过敏，只想找个连快递都送不到的地方。在那里哪怕你烂在被窝里，都没人催你交周报。", quote:"快递到不了的地方，老板也到不了。", color:["#4CAF50","#2E7D32"] },
+  { name:"漠河", emoji:"🌟", tag:"找不着北的流浪汉", desc:"你在职场上找不着北，不如直接去中国最北端。在白雪皑皑里，你能深刻体会什么叫「冻得连辞职的念头都僵硬了」。", quote:"人生如北极光，可遇不可求，主要是太冷。", color:["#3F51B5","#1A237E"] },
+  { name:"梵蒂冈", emoji:"⛪", tag:"等待天降神迹", desc:"你的精神状态已完全脱离唯物主义。建议直接搬去梵蒂冈，毕竟你现在唯一的翻盘机会就是天天祈祷上帝直接给你打钱。", quote:"信则灵，不信则穷。", color:["#FFC107","#F57F17"] },
+  { name:"印度恒河", emoji:"🛁", tag:"干了这碗恒河水", desc:"你对卫生和尊严已没要求了。去恒河边坐下，看着水面上漂浮的万物，你会觉得现在经历的这点降薪根本不叫事儿。", quote:"没有什么烦恼是拉一次肚子解决不了的。", color:["#FF9800","#E65100"] },
+  { name:"歌舞伎町网吧", emoji:"🎮", tag:"赛博朋克难民", desc:"你在国内卷废了，去日本也只能当底层「网吧难民」。在不到两平米小格子里喝免费饮料看漫画逃避现实，这是你为数不多的快乐。", quote:"两平米的自由也是自由。", color:["#7B1FA2","#4A148C"] },
+  { name:"太平洋孤岛", emoji:"🏝", tag:"荒岛余生", desc:"你的社交能量已清零。你适合像鲁滨逊一样去个鸟不拉屎的荒岛，每天跟排球说话。没有KPI，只有星期五。", quote:"孤独是一种奢侈品，前提是你买得起船票。", color:["#009688","#004D40"] },
+  { name:"火星基地", emoji:"🚀", tag:"地球不配拥有你", desc:"你的奇葩程度已超出碳基生物范畴。建议联系马斯克把你绑火箭上发射去火星，那是你理所应当的归宿。", quote:"地球危险，火星更危险，但没有领导。", color:["#F44336","#B71C1C"] },
+  { name:"海南文昌", emoji:"💫", tag:"看火箭发射等退休", desc:"你多少还有点积蓄，不想像穷鬼一样缩在东北。文昌海风和椰子树能给你一丝体面。每天搬小板凳看火箭发射，感叹自己这辈子是飞不起来了。", quote:"别人上天，你坐地上看。", color:["#00BCD4","#00838F"] },
+  { name:"攀枝花", emoji:"🥭", tag:"芒果自由的夕阳红", desc:"你提前步入了老年生活，厌倦了北上广的阴霾。攀枝花的阳光和便宜芒果是你余生的支柱，你已提前三十年过上了广场舞大妈向往的生活。", quote:"在别人奋斗的年纪选择了养生。", color:["#FF9800","#EF6C00"] },
+  { name:"义乌", emoji:"💵", tag:"睡在金币上的守财奴", desc:"你嘴上喊躺平，心里放不下搞钱。在义乌哪怕躺在床上，周围全是几分钱几毛钱的塑料商品，这种置身财富海洋的错觉让你无比安心。", quote:"躺平是不可能躺平的，这辈子都不可能。", color:["#FFC107","#FF6F00"] },
+  { name:"丹东", emoji:"👁", tag:"隔江相望的虚无", desc:"你手里有两闲钱，跑去边境城市天天望着对岸发呆。看着对面毫无波澜，你油然而生一种优越感，以此抚慰你在大城市被老板碾压的自尊心。", quote:"望向对岸才知道，自己还行。", color:["#78909C","#37474F"] },
+  { name:"新疆伊犁", emoji:"🐎", tag:"假装在瑞士的大冤种", desc:"你去不起真瑞士只能去平替。在那里骑着马看草原，假装自己是放荡不羁的牧民。其实背地里焦虑没信号收不到客户微信。", quote:"风景再美，也美不过甲方的催促。", color:["#66BB6A","#2E7D32"] },
+  { name:"平壤", emoji:"👤", tag:"包分配终极摆烂", desc:"你连每天吃什么都不想自己决定了。平壤最适合你，包吃包住包分配工作。不需要职业规划，上面让你干啥你干啥，彻底交出大脑使用权。", quote:"不用做选择就不会选错。", color:["#F44336","#C62828"] },
+  { name:"冰岛", emoji:"🦣", tag:"昂贵的孤独", desc:"你有点臭钱，连躺平都要挑最贵最有逼格的地方。在黑沙滩吹着刺骨妖风，思考卡里那几百万怎么花。你的孤独散发着金钱的酸臭味。", quote:"有钱人的烦恼你想象不到。", color:["#455A64","#263238"] },
+  { name:"瑞士阿尔卑斯", emoji:"⛷", tag:"需要被包养的巨婴", desc:"你不仅不想上班还极度贪图享受。去瑞士滑雪泡温泉是你梦寐以求的躺平方式。问题是你那点工资连机票都买不起，唯一出路是找个富婆包养你。", quote:"梦想不用花钱，去瑞士要。", color:["#42A5F5","#1565C0"] },
+  { name:"迪拜", emoji:"💎", tag:"捡垃圾的致富梦", desc:"你满脑子一夜暴富。听说迪拜要饭月入百万，恨不得马上买机票去捡垃圾。你的躺平不是真躺，是想不劳而获，贪婪至极。", quote:"迪拜的垃圾桶比你家客厅都大。", color:["#FFC107","#F57F17"] },
+  { name:"马赛马拉", emoji:"🦁", tag:"狂野的达尔文信徒", desc:"你骨子里是个狠人，觉得城市生活太无聊。想去大草原看动物迁徙，甚至想和狮子肉搏。你不需要躺平，你需要的是生死边缘的刺激。", quote:"在非洲草原上，KPI就是活着。", color:["#8D6E63","#4E342E"] },
+  { name:"马尔代夫", emoji:"🌊", tag:"末日狂欢", desc:"反正马上就要沉了，就像你那摇摇欲坠的职场生涯。你带上全部家当挥霍最后一把。主打一个只要我花得快，穷神就追不上我。", quote:"今朝有酒今朝醉，明天的事明天废。", color:["#26C6DA","#00838F"] },
+  { name:"你家卧室的床", emoji:"🛌", tag:"无力反抗的终极社畜", desc:"别做梦了！算来算去你发现自己连辞职的勇气都没有，更别提出去躺平。你唯一的退路就是在周末晚上死死抱住你家那张破床，流着泪调好周一八个闹钟。", quote:"闹钟响了，梦就碎了。", color:["#9E9E9E","#424242"] }
 ];
 
-// ══════════════════════════════════════
-// 逻辑
-// ══════════════════════════════════════
+// ══════ 逻辑 ══════
 let qi=0, score=0, matched=null;
+const SITE_URL = location.href.split('?')[0];
 
 function switchView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -288,10 +246,10 @@ function renderQ(){
   const q=questions[qi];
   document.getElementById('progressFill').style.width=((qi+1)/questions.length*100)+'%';
   document.getElementById('progressText').textContent=(qi+1)+'/'+questions.length;
-  document.getElementById('qTitle').innerHTML=(qi+1)+'. '+q.title;
+  document.getElementById('qTitle').textContent=(qi+1)+'. '+q.title;
   const box=document.getElementById('qOptions');box.innerHTML='';
   q.options.forEach(o=>{
-    const b=document.createElement('button');b.className='opt-btn';b.innerHTML=o.text;
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o.text;
     b.onclick=()=>{score+=o.score;qi++;setTimeout(renderQ,120);};
     box.appendChild(b);
   });
@@ -302,97 +260,117 @@ function calculate(){
   const msgs=["正在扫描你的支付宝余额...","正在评估你的抗压底线...","正在用AI分析你的精神状态...","正在向全球32个城市发起匹配..."];
   let mi=0;
   const iv=setInterval(()=>{mi=(mi+1)%msgs.length;document.getElementById('loadingMsg').textContent=msgs[mi];},900);
-  setTimeout(()=>{
-    clearInterval(iv);
-    let idx=Math.floor((score/100)*31);
-    idx=Math.max(0,Math.min(31,idx));
-    matched=cities[idx];
-    showResult();
-  },3000);
+  setTimeout(()=>{clearInterval(iv);let idx=Math.floor((score/100)*31);idx=Math.max(0,Math.min(31,idx));matched=cities[idx];renderPoster();},3000);
 }
 
-function showResult(){
-  document.getElementById('resCity').textContent=matched.name;
-  document.getElementById('resTag').textContent=matched.tag;
-  document.getElementById('resDesc').textContent=matched.desc;
-  document.getElementById('resQuote').textContent='—— '+matched.quote;
-  switchView('view-result');
-}
-
-// ══════════════════════════════════════
-// 海报生成
-// ══════════════════════════════════════
-function generatePoster(){
+// ══════ 海报生成（结果直接就是海报图片） ══════
+function renderPoster(){
   const c=document.getElementById('posterCanvas');
   const ctx=c.getContext('2d');
   const W=720,H=1280;c.width=W;c.height=H;
   const cl=matched.color||['#FF9500','#E65100'];
 
   // 背景渐变
-  const grd=ctx.createLinearGradient(0,0,0,H);
+  const grd=ctx.createLinearGradient(0,0,W*0.3,H);
   grd.addColorStop(0,cl[0]);grd.addColorStop(1,cl[1]);
   ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
 
-  // 装饰圆圈
-  ctx.globalAlpha=0.08;
-  ctx.beginPath();ctx.arc(580,200,200,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
-  ctx.beginPath();ctx.arc(140,900,250,0,Math.PI*2);ctx.fill();
+  // 装饰圆
+  ctx.globalAlpha=0.07;ctx.fillStyle='#fff';
+  ctx.beginPath();ctx.arc(600,180,220,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(120,950,280,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(650,700,150,0,Math.PI*2);ctx.fill();
   ctx.globalAlpha=1;
 
-  // 顶部标题
-  ctx.fillStyle='rgba(255,255,255,0.9)';
-  ctx.font='700 28px sans-serif';ctx.textAlign='center';
-  ctx.fillText('全球躺平退路规划局',W/2,80);
+  // 顶部小标题
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='600 26px sans-serif';
+  ctx.fillText('🌍 全球躺平退路规划局',W/2,70);
+  ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='400 20px sans-serif';
+  ctx.fillText('你的退路鉴定报告',W/2,105);
 
-  ctx.fillStyle='rgba(255,255,255,0.5)';
-  ctx.font='400 22px sans-serif';
-  ctx.fillText('—— 你的退路鉴定报告 ——',W/2,120);
+  // 分割线
+  ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(100,130);ctx.lineTo(W-100,130);ctx.stroke();
 
-  // emoji
-  ctx.font='120px sans-serif';
-  ctx.fillText(matched.emoji||'&#127758;',W/2,300);
+  // 大 emoji
+  ctx.font='140px sans-serif';
+  ctx.fillText(matched.emoji,W/2,310);
 
   // 城市名
-  ctx.fillStyle='#fff';ctx.font='900 72px sans-serif';
-  ctx.fillText(matched.name,W/2,430);
+  ctx.fillStyle='#fff';ctx.font='900 76px sans-serif';
+  ctx.shadowColor='rgba(0,0,0,0.3)';ctx.shadowBlur=10;ctx.shadowOffsetY=4;
+  ctx.fillText(matched.name,W/2,440);
+  ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
 
-  // tag
-  ctx.font='700 30px sans-serif';
-  const tagW=ctx.measureText(matched.tag).width+40;
-  ctx.fillStyle='rgba(0,0,0,0.25)';
-  roundRect(ctx,(W-tagW)/2,460,tagW,44,22);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='700 26px sans-serif';
-  ctx.fillText(matched.tag,W/2,490);
+  // Tag 胶囊
+  ctx.font='700 28px sans-serif';
+  const tagW=ctx.measureText(matched.tag).width+48;
+  roundRect(ctx,(W-tagW)/2,465,tagW,46,23);
+  ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='700 24px sans-serif';
+  ctx.fillText(matched.tag,W/2,496);
 
-  // 描述文字（自动换行）
-  ctx.fillStyle='rgba(255,255,255,0.92)';ctx.font='400 26px sans-serif';ctx.textAlign='left';
-  wrapText(ctx,matched.desc,60,570,600,38);
+  // 描述（白底卡片）
+  const cardY=540, cardH=330;
+  roundRect(ctx,40,cardY,W-80,cardH,16);
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fill();
+  ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,0.95)';ctx.font='400 26px sans-serif';
+  wrapText(ctx,matched.desc,70,cardY+40,W-140,38);
 
   // 金句
-  ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='italic 24px sans-serif';
-  ctx.fillText('"'+matched.quote+'"',W/2,1060);
+  ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='italic 22px sans-serif';
+  ctx.fillText('「'+matched.quote+'」',W/2,cardY+cardH+50);
 
-  // 底部
-  ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,H-120,W,120);
-  ctx.fillStyle='rgba(255,255,255,0.9)';ctx.font='700 24px sans-serif';ctx.textAlign='center';
-  ctx.fillText('&#128073; 长按识别测测你的退路',W/2,H-70);
-  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='400 18px sans-serif';
-  ctx.fillText('全球躺平退路规划局 | tangping.test',W/2,H-35);
+  // ── 底部区域：二维码 + 引导文字 ──
+  const footY=H-170;
+  ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(0,footY,W,170);
 
-  // 弹出
-  document.getElementById('posterOverlay').classList.add('active');
+  // 生成二维码
+  const qr = qrcode(0,'M');
+  qr.addData(SITE_URL);
+  qr.make();
+  const qrSize=100, qrX=W/2-qrSize/2, qrY=footY+15;
+  const mods=qr.getModuleCount();
+  const cellSize=qrSize/mods;
+  // 二维码白底
+  roundRect(ctx,qrX-6,qrY-6,qrSize+12,qrSize+12,8);
+  ctx.fillStyle='#fff';ctx.fill();
+  // 画二维码
+  ctx.fillStyle='#000';
+  for(let r=0;r<mods;r++){
+    for(let c2=0;c2<mods;c2++){
+      if(qr.isDark(r,c2)){
+        ctx.fillRect(qrX+c2*cellSize,qrY+r*cellSize,cellSize+0.5,cellSize+0.5);
+      }
+    }
+  }
+
+  // 引导文字
+  ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='600 20px sans-serif';
+  ctx.fillText('扫码测测你的退路 👆',W/2,footY+qrSize+40);
+
+  // 输出为图片
+  const dataUrl=c.toDataURL('image/png');
+  document.getElementById('posterImg').src=dataUrl;
+  switchView('view-result');
 }
 
-function closePoster(){document.getElementById('posterOverlay').classList.remove('active');}
-
-// canvas 辅助
-function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+// Canvas 辅助
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
 function wrapText(ctx,text,x,y,maxW,lineH){
-  let words=text.split('');let line='';let cy=y;
-  for(let i=0;i<words.length;i++){
-    let test=line+words[i];
-    if(ctx.measureText(test).width>maxW&&i>0){ctx.fillText(line,x,cy);line=words[i];cy+=lineH;}
-    else{line=test;}
+  let line='',cy=y;
+  for(let i=0;i<text.length;i++){
+    const test=line+text[i];
+    if(ctx.measureText(test).width>maxW&&i>0){ctx.fillText(line,x,cy);line=text[i];cy+=lineH;}
+    else line=test;
   }
   ctx.fillText(line,x,cy);
 }
