@@ -578,78 +578,81 @@ function calc(){
 
 function genPoster(){
   const cv=document.getElementById('posterCanvas'),cx=cv.getContext('2d');
-  const W=720,H=1200;cv.width=W;cv.height=H;
+  const W=750,H=1334;cv.width=W;cv.height=H;
 
   // 背景
   const g=cx.createLinearGradient(0,0,W*.4,H);
   g.addColorStop(0,mt.c[0]);g.addColorStop(1,mt.c[1]);
   cx.fillStyle=g;cx.fillRect(0,0,W,H);
 
-  // 装饰圆
-  cx.globalAlpha=.06;cx.fillStyle='#fff';
-  cx.beginPath();cx.arc(620,130,220,0,Math.PI*2);cx.fill();
-  cx.beginPath();cx.arc(80,900,280,0,Math.PI*2);cx.fill();
+  // 装饰圆（加深一点，不再过透明）
+  cx.globalAlpha=.12;cx.fillStyle='#fff';
+  cx.beginPath();cx.arc(650,130,240,0,Math.PI*2);cx.fill();
+  cx.beginPath();cx.arc(80,1000,300,0,Math.PI*2);cx.fill();
   cx.globalAlpha=1;
 
-  // ═══ 顶部引导语（让朋友圈的人看懂） ═══
+  // ═══ 顶部引导语 ═══
   cx.textAlign='center';
-  cx.fillStyle='rgba(255,255,255,.45)';cx.font='500 24px sans-serif';
-  cx.fillText('🌍 全球躺平退路规划局',W/2,45);
+  cx.fillStyle='#fff';cx.font='700 34px sans-serif';
+  cx.fillText('🌍 全球躺平退路规划局',W/2,70);
 
-  // 主引导句 — 让人一眼看懂这是啥
-  cx.fillStyle='rgba(255,255,255,.85)';cx.font='700 34px sans-serif';
-  cx.fillText('经过10道灵魂拷问鉴定',W/2,95);
-  cx.fillStyle='#fff';cx.font='900 38px sans-serif';
-  cx.fillText('最适合我躺平的地方是——',W/2,145);
+  // 主引导句
+  cx.fillStyle='#fff';cx.font='800 44px sans-serif';
+  cx.fillText('经过10道灵魂拷问鉴定',W/2,140);
+  cx.fillStyle='#ffd54f';cx.font='900 50px sans-serif';
+  cx.fillText('最适合我躺平的地方是',W/2,200);
 
-  // 分割线
-  cx.strokeStyle='rgba(255,255,255,.2)';cx.lineWidth=1;
-  cx.beginPath();cx.moveTo(120,170);cx.lineTo(W-120,170);cx.stroke();
+  // 粗分割线（实色）
+  cx.fillStyle='#fff';cx.fillRect(100,225,W-200,4);
 
   // ═══ 核心结果区 ═══
-  // emoji
-  cx.font='140px sans-serif';cx.fillText(mt.e,W/2,340);
+  // emoji 特大
+  cx.font='180px sans-serif';cx.fillText(mt.e,W/2,430);
 
-  // 城市名 — 巨大
-  cx.fillStyle='#fff';cx.font='900 96px sans-serif';
-  cx.shadowColor='rgba(0,0,0,.3)';cx.shadowBlur=12;cx.shadowOffsetY=5;
-  cx.fillText(mt.n,W/2,480);cx.shadowColor='transparent';
+  // 城市名 — 超巨大
+  cx.fillStyle='#fff';cx.font='900 130px sans-serif';
+  cx.shadowColor='rgba(0,0,0,.4)';cx.shadowBlur=15;cx.shadowOffsetY=6;
+  cx.fillText(mt.n,W/2,580);cx.shadowColor='transparent';
 
-  // tag胶囊
-  cx.font='800 32px sans-serif';
-  const tw2=cx.measureText(mt.t).width+56;
-  rr(cx,(W-tw2)/2,505,tw2,52,26);cx.fillStyle='rgba(255,255,255,.2)';cx.fill();
-  cx.strokeStyle='rgba(255,255,255,.3)';cx.lineWidth=1.5;cx.stroke();
-  cx.fillStyle='#fff';cx.font='800 28px sans-serif';cx.fillText(mt.t,W/2,539);
+  // tag胶囊 — 实色背景
+  cx.font='900 38px sans-serif';
+  const tw2=cx.measureText(mt.t).width+70;
+  rr(cx,(W-tw2)/2,615,tw2,64,32);cx.fillStyle='#fff';cx.fill();
+  cx.fillStyle=mt.c[1];cx.font='900 36px sans-serif';cx.fillText(mt.t,W/2,659);
 
-  // ═══ 描述区 ═══
-  cx.textAlign='left';cx.fillStyle='rgba(255,255,255,.88)';cx.font='500 28px sans-serif';
-  const ey=wrap(cx,mt.d,55,610,610,40);
+  // ═══ 描述区 — 加大加粗 ═══
+  cx.textAlign='left';cx.fillStyle='#fff';cx.font='700 34px sans-serif';
+  const ey=wrap(cx,mt.d,50,740,650,48);
 
-  // 金句
-  cx.textAlign='center';cx.fillStyle='rgba(255,255,255,.5)';cx.font='italic 24px sans-serif';
-  const quoteY=Math.min(ey+55,H-260);
+  // 金句 — 加大不透明
+  cx.textAlign='center';cx.fillStyle='#ffd54f';cx.font='900 30px sans-serif';
+  const quoteY=Math.min(ey+70,H-320);
   cx.fillText('「'+mt.q+'」',W/2,quoteY);
 
   // ═══ 底部 — 引导扫码 ═══
-  const footH=200;
-  cx.fillStyle='rgba(0,0,0,.15)';cx.fillRect(0,H-footH,W,footH);
+  const footH=260;
+  cx.fillStyle='rgba(0,0,0,.35)';cx.fillRect(0,H-footH,W,footH);
 
-  // 左边：引导文字
-  cx.textAlign='left';cx.fillStyle='rgba(255,255,255,.9)';cx.font='700 28px sans-serif';
-  cx.fillText('你的退路在哪？',55,H-footH+50);
-  cx.fillStyle='rgba(255,255,255,.55)';cx.font='500 22px sans-serif';
-  cx.fillText('扫码测测 · 10道题鉴定你的退路',55,H-footH+85);
-  cx.fillStyle='rgba(255,255,255,.35)';cx.font='400 18px sans-serif';
-  cx.fillText('全球躺平退路规划局',55,H-footH+120);
+  // 左边：引导文字 — 全部实色大字
+  cx.textAlign='left';cx.fillStyle='#fff';cx.font='900 40px sans-serif';
+  cx.fillText('你的退路在哪？',45,H-footH+70);
+  cx.fillStyle='#ffd54f';cx.font='800 28px sans-serif';
+  cx.fillText('扫码测一下',45,H-footH+115);
+  cx.fillStyle='#fff';cx.font='700 26px sans-serif';
+  cx.fillText('10道题 · 32种结局',45,H-footH+155);
+  cx.fillStyle='#fff';cx.font='700 22px sans-serif';
+  cx.fillText('👇 看看你适合躺在哪',45,H-footH+195);
 
-  // 右边：二维码
+  // 右边：二维码 — 更大
   if(typeof qrcode!=='undefined'){
     const qr=qrcode(0,'M');qr.addData(URL0);qr.make();
-    const qs=120,qx=W-qs-60,qy=H-footH+25,mc=qr.getModuleCount(),cs=qs/mc;
-    rr(cx,qx-8,qy-8,qs+16,qs+16,10);cx.fillStyle='#fff';cx.fill();
+    const qs=170,qx=W-qs-45,qy=H-footH+45,mc=qr.getModuleCount(),cs=qs/mc;
+    rr(cx,qx-12,qy-12,qs+24,qs+24,14);cx.fillStyle='#fff';cx.fill();
     cx.fillStyle='#000';
     for(let r=0;r<mc;r++)for(let c2=0;c2<mc;c2++)if(qr.isDark(r,c2))cx.fillRect(qx+c2*cs,qy+r*cs,cs+.5,cs+.5);
+    // 二维码下方"扫一扫"
+    cx.fillStyle='#fff';cx.font='800 22px sans-serif';cx.textAlign='center';
+    cx.fillText('长按识别',qx+qs/2,qy+qs+38);
   }
 
   // 展示结果页 + 弹出海报蒙版
