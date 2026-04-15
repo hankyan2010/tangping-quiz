@@ -548,9 +548,9 @@ const cities=[
   {n:"你家的床",e:"🛌",t:"无力反抗的终极社畜",d:"测了半天，你的退路就是屁股底下这张宜家床板。周一早上八个闹钟依次响起，你每关一个就死一次。这不是起床，是渡劫。",q:"世界那么大，你的世界只有1.8×2米。",c:["#9E9E9E","#424242"]}
 ];
 
-let qi=0,sc=0,mt=null;const URL0=location.href.split('?')[0];
+let qi=0,sc=0,mt=null,ans=[];const URL0=location.href.split('?')[0];
 function sw(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function startQuiz(){qi=0;sc=0;sw('quiz');rq();}
+function startQuiz(){qi=0;sc=0;ans=[];sw('quiz');rq();}
 function closePoster(){document.getElementById('posterOverlay').classList.remove('active');}
 
 function rq(){
@@ -562,9 +562,9 @@ function rq(){
   document.getElementById('qTitle').textContent=q.q;
   drawPixelScene(qi);
   const b=document.getElementById('qOpts');b.innerHTML='';
-  q.opts.forEach(o=>{
+  q.opts.forEach((o,oi)=>{
     const d=document.createElement('button');d.className='opt-card';d.textContent=o[0];
-    d.onclick=()=>{sc+=o[1];qi++;setTimeout(rq,130);};
+    d.onclick=()=>{sc+=o[1];ans.push(oi);qi++;setTimeout(rq,130);};
     b.appendChild(d);
   });
 }
@@ -573,7 +573,17 @@ function calc(){
   sw('loading');
   const ms=["正在偷看你的花呗账单...","你的存款余额吓到系统了...","全球32个城市正在开会研究谁来收留你...","AI算了三遍，结果一次比一次惨..."];
   let i=0;const iv=setInterval(()=>{i=(i+1)%ms.length;document.getElementById('ldMsg').textContent=ms[i];},900);
-  setTimeout(()=>{clearInterval(iv);let x=Math.floor((sc/100)*31);x=Math.max(0,Math.min(31,x));mt=cities[x];genPoster();},2500);
+  setTimeout(()=>{
+    clearInterval(iv);
+    // 用答题序列hash决定城市 —— 32城市均等概率
+    // 3^10=59049 种组合打散到 32 桶，每桶 ~1845 种，差异<0.02%
+    let h=0;for(let i=0;i<ans.length;i++)h=h*3+ans[i];
+    // 叠加一个扰动让相邻输入散开
+    h=(h*2654435761)>>>0;
+    const x=h%32;
+    mt=cities[x];
+    genPoster();
+  },2500);
 }
 
 function genPoster(){
