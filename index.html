@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>全球躺平退路规划局</title>
+<title>你这辈子最适合躺在哪？| 全球躺平退路鉴定局</title>
+<meta name="description" content="10道灵魂拷问，AI给你规划32种躺平归属地。鹤岗？大理？歌舞伎町网吧？还是——你家的那张床？测完想打人概不负责。">
+<meta name="keywords" content="躺平,测试,鹤岗,大理,清迈,躺平城市,性格测试">
+
+<!-- 微信/QQ/朋友圈分享 -->
+<meta itemprop="name" content="你这辈子最适合躺在哪？">
+<meta itemprop="description" content="10题测出你的归属地，32种躺平结局等你解锁。测完不服来辩。">
+<meta itemprop="image" content="https://waimaiketang.com/tangping/thumb.png">
+
+<!-- Open Graph（微信老版本部分识别） -->
+<meta property="og:title" content="你这辈子最适合躺在哪？| 躺平退路鉴定局">
+<meta property="og:description" content="10题测出你的归属地——鹤岗？大理？歌舞伎町网吧？32种结局，测了都说准。">
+<meta property="og:image" content="https://waimaiketang.com/tangping/thumb.png">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/svg+xml" href="thumb.svg">
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" async></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -70,9 +85,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 .ad-label{position:absolute;top:3px;right:8px;font-size:9px;color:rgba(0,0,0,.15);background:rgba(0,0,0,.04);padding:1px 6px;border-radius:3px;z-index:2}
 
 #posterCanvas{display:none}
+
+/* 首页转发按钮 */
+.share-row{display:flex;gap:10px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+.share-chip{background:rgba(0,0,0,.08);color:#111;font-size:14px;font-weight:700;padding:8px 16px;border-radius:999px;border:none;cursor:pointer}
+.share-chip:active{background:rgba(0,0,0,.14)}
+
+/* 微信分享引导蒙层 */
+.wx-guide{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-start;justify-content:flex-end;padding:20px}
+.wx-guide.active{display:flex}
+.wx-guide-arrow{width:80px;height:80px;margin-right:20px;margin-top:10px}
+.wx-guide-text{color:#fff;font-size:18px;font-weight:700;text-align:center;max-width:260px;margin-top:120px;line-height:1.6}
+.wx-guide-text b{color:#FFD100;font-size:22px}
+.wx-guide-hint{color:rgba(255,255,255,.7);font-size:14px;margin-top:20px}
 </style>
 </head>
 <body>
+<!-- 微信分享抓取用的缩略图：必须在DOM里且≥300x300，不能display:none -->
+<img src="thumb.png" alt="你这辈子最适合躺在哪？" width="300" height="300" style="position:fixed;top:-9999px;left:-9999px;width:300px;height:300px;pointer-events:none" referrerpolicy="no-referrer">
 <div class="shell">
   <section id="home" class="screen active">
     <div class="home">
@@ -81,6 +111,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
       <p class="home-sub">10刀下去，片片见骨</p>
       <div class="home-warn">⚠️ 测完想打人概不负责</div>
       <button class="btn-raised" onclick="startQuiz()">开 始 鉴 定</button>
+      <div class="share-row">
+        <button class="share-chip" onclick="showWxGuide()">📤 转发给好友一起测</button>
+      </div>
     </div>
   </section>
 
@@ -141,6 +174,19 @@ TencentGDT.push({
 });
 (function(){var s=document.createElement('script');s.async=true;s.src='https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';document.head.appendChild(s);})();
 </script>
+
+<!-- 微信转发引导 -->
+<div class="wx-guide" id="wxGuide" onclick="hideWxGuide()">
+  <svg class="wx-guide-arrow" viewBox="0 0 100 100" fill="none">
+    <path d="M20 75 Q50 40 80 20" stroke="#FFD100" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 4"/>
+    <path d="M70 18 L82 18 L80 32" stroke="#FFD100" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="wx-guide-text">
+    点击右上角 <b>⋯</b><br>
+    分享给朋友 / 发到朋友圈<br>
+    <div class="wx-guide-hint">看看谁比你更躺平 😎<br>（点任意处关闭）</div>
+  </div>
+</div>
 
 <canvas id="posterCanvas"></canvas>
 
@@ -552,6 +598,21 @@ let qi=0,sc=0,mt=null,ans=[];const URL0=location.href.split('?')[0];
 function sw(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function startQuiz(){qi=0;sc=0;ans=[];sw('quiz');rq();}
 function closePoster(){document.getElementById('posterOverlay').classList.remove('active');}
+function isWechat(){return /MicroMessenger/i.test(navigator.userAgent);}
+function showWxGuide(){
+  if(isWechat()){
+    document.getElementById('wxGuide').classList.add('active');
+  }else{
+    const url=location.href.split('?')[0];
+    const txt='【全球躺平退路鉴定局】10题测出你这辈子最适合躺在哪儿——鹤岗？大理？歌舞伎町网吧？'+url;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(()=>alert('✅ 链接+文案已复制\n粘贴到微信发给朋友吧'));
+    }else{
+      prompt('复制这段发给朋友 👇',txt);
+    }
+  }
+}
+function hideWxGuide(){document.getElementById('wxGuide').classList.remove('active');}
 
 function rq(){
   if(qi>=questions.length){calc();return;}
