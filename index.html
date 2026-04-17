@@ -166,14 +166,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 window.TencentGDT = window.TencentGDT || [];
 var __adFallback = function(tag){
   var p = document.querySelector('.ad-placeholder');
-  if(p) p.textContent = '[调试] ' + tag;
+  if(p) p.textContent = '—— 广告位 ——';
   console.warn('[GDT] fallback:', tag);
 };
-window.addEventListener('error', function(e){
-  if(e && e.target && e.target.src && e.target.src.indexOf('gdtimg')>=0){
-    __adFallback('SDK脚本加载失败(可能被广告拦截器屏蔽)');
-  }
-}, true);
 var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
 TencentGDT.push({
   app_id: '1216588626',
