@@ -164,9 +164,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 
 <script>
 window.TencentGDT = window.TencentGDT || [];
+// 生成一个持久化的 web 端 muid（弥补没有 imei/idfa 的情况，避免 100002 "no guid/wuid" 拒绝）
+var __gdt_muid = (function(){
+  try {
+    var m = localStorage.getItem('_gdt_muid');
+    if (!m) {
+      m = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2,12);
+      localStorage.setItem('_gdt_muid', m);
+    }
+    return m;
+  } catch(e) { return 'w' + Date.now(); }
+})();
 var __adFallback = function(tag){
   var p = document.querySelector('.ad-placeholder');
-  if(p) p.textContent = '—— 广告位 ——';
+  if(p) p.textContent = '[诊断] ' + tag;
   console.warn('[GDT] fallback:', tag);
 };
 var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
@@ -176,6 +187,8 @@ TencentGDT.push({
   type: 'native', display_type: 'banner',
   carousel: 3000,
   containerid: 'gdt-ad-container',
+  muid_type: '3',   // 3 = mac 兜底（web 端没 imei/idfa，给个标识避免 100002）
+  muid: __gdt_muid,
   onComplete: function(res){
     clearTimeout(__adTimer);
     console.log('[GDT] onComplete:', res);
