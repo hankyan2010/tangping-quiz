@@ -154,37 +154,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
   </div>
 </div>
 
-<!-- 广告位：新版 ins tag 方式（2026 广点通主推） -->
+<!-- 广告位 -->
 <div class="ad-bar">
   <span class="ad-label">广告</span>
-  <div id="gdt-wrap" style="width:100%;display:flex;align-items:center;justify-content:center;min-height:50px">
-    <ins class="gdt_tag"
-         data-app-id="1216588626"
-         data-placement-id="7279955477334718"
-         id="gdt-ad-container"
-         style="display:block;width:100%;min-height:50px">
-    </ins>
-    <span class="ad-placeholder" id="ad-fallback-text">广告加载中...</span>
+  <div id="gdt-ad-container" style="width:100%;min-height:50px;display:flex;align-items:center;justify-content:center">
+    <span class="ad-placeholder">广告加载中...</span>
   </div>
 </div>
 
 <script>
-(function(){
-  var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';
-  document.head.appendChild(s);
+// SDK 只认 muid/muid_type，每浏览器本地持久一个
+var __gdt_muid = (function(){
+  try {
+    var m = localStorage.getItem('_gdt_muid');
+    if (!m) {
+      m = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 14);
+      localStorage.setItem('_gdt_muid', m);
+    }
+    return m;
+  } catch(e) { return 'w' + Date.now(); }
 })();
-// 8 秒内没填广告就显示兜底文字
-setTimeout(function(){
-  var ins = document.getElementById('gdt-ad-container');
-  var fallback = document.getElementById('ad-fallback-text');
-  if (ins && (ins.children.length > 0 || ins.innerHTML.trim().length > 0)) {
-    if (fallback) fallback.style.display = 'none';
-  } else {
-    if (fallback) fallback.textContent = '—— 广告位 ——';
-  }
-}, 8000);
+
+window.TencentGDT = window.TencentGDT || [];
+var __adFallback = function(tag){
+  var p = document.querySelector('.ad-placeholder');
+  if(p) p.textContent = '—— 广告位 ——';
+  console.warn('[GDT] fallback:', tag);
+};
+var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
+TencentGDT.push({
+  app_id: '1216588626',
+  placement_id: '7279955477334718',
+  type: 'native',
+  display_type: 'banner',
+  carousel: 3000,
+  containerid: 'gdt-ad-container',
+  muid_type: '3',
+  muid: __gdt_muid,
+  onComplete: function(res){
+    clearTimeout(__adTimer);
+    console.log('[GDT] onComplete:', res);
+    if (res && (res.ret === 0 || (res.constructor === Array && res.length > 0))) {
+      var p = document.querySelector('.ad-placeholder'); if (p) p.style.display='none';
+    } else {
+      __adFallback('ret=' + (res && res.ret) + ' msg=' + (res && res.msg));
+    }
+  },
+  onError: function(e){ clearTimeout(__adTimer); __adFallback('onError ' + JSON.stringify(e||{})); }
+});
+(function(){var s=document.createElement('script');s.async=true;s.src='https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';s.onerror=function(){__adFallback('sdk load fail');};document.head.appendChild(s);})();
 </script>
 
 <!-- 微信转发引导 -->
