@@ -181,32 +181,22 @@ var __adFallback = function(tag){
   console.warn('[GDT] fallback:', tag);
 };
 var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
-var __GDT_APP = '1216588626';
-var __GDT_PID = '4269041342551263';
-var __GDT_CONTAINER = 'gdt-ad-container';
 TencentGDT.push({
-  app_id: __GDT_APP,
-  placement_id: __GDT_PID,
-  type: 'native',            // 原生模板，必须手动 renderAd
-  count: 1,
+  app_id: '1216588626',
+  placement_id: '7279955477334718',
+  type: 'native',
+  display_type: 'banner',
+  carousel: 3000,
+  containerid: 'gdt-ad-container',
   muid_type: '3',
   muid: __gdt_muid,
   onComplete: function(res){
     clearTimeout(__adTimer);
     console.log('[GDT] onComplete:', res);
-    if (res && res.constructor === Array && res.length > 0) {
-      try {
-        window.TencentGDT.NATIVE.renderAd(res[0], __GDT_CONTAINER);
-        var p = document.querySelector('.ad-placeholder'); if (p) p.style.display='none';
-      } catch(e) {
-        __adFallback('renderAd err: ' + (e && e.message));
-      }
+    if (res && (res.ret === 0 || (res.constructor === Array && res.length > 0))) {
+      var p = document.querySelector('.ad-placeholder'); if (p) p.style.display='none';
     } else {
-      __adFallback('无广告 ret=' + (res && res.ret) + ' msg=' + (res && res.msg));
-      // 无广告时 3 秒后重试（官方推荐，每分钟 ≤20 次）
-      setTimeout(function(){
-        try { window.TencentGDT.NATIVE.loadAd(__GDT_PID); } catch(_) {}
-      }, 3000);
+      __adFallback('ret=' + (res && res.ret) + ' msg=' + (res && res.msg));
     }
   },
   onError: function(e){ clearTimeout(__adTimer); __adFallback('onError ' + JSON.stringify(e||{})); }
