@@ -157,22 +157,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <!-- 广告位：新版 ins tag 方式（2026 广点通主推） -->
 <div class="ad-bar">
   <span class="ad-label">广告</span>
-  <ins class="gdt_tag"
-       data-app-id="1216588626"
-       data-placement-id="7279955477334718"
-       id="gdt-ad-container"
-       style="display:block;width:100%;min-height:50px">
-  </ins>
+  <div id="gdt-wrap" style="width:100%;display:flex;align-items:center;justify-content:center;min-height:50px">
+    <ins class="gdt_tag"
+         data-app-id="1216588626"
+         data-placement-id="7279955477334718"
+         id="gdt-ad-container"
+         style="display:block;width:100%;min-height:50px">
+    </ins>
+    <span class="ad-placeholder" id="ad-fallback-text">广告加载中...</span>
+  </div>
 </div>
 
 <script>
-// SDK 自动扫描页面里 class="gdt_tag" 的 <ins>，读取 data-app-id / data-placement-id 自动填充
 (function(){
   var s = document.createElement('script');
   s.async = true;
   s.src = 'https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';
   document.head.appendChild(s);
 })();
+// 8 秒内没填广告就显示兜底文字
+setTimeout(function(){
+  var ins = document.getElementById('gdt-ad-container');
+  var fallback = document.getElementById('ad-fallback-text');
+  if (ins && (ins.children.length > 0 || ins.innerHTML.trim().length > 0)) {
+    if (fallback) fallback.style.display = 'none';
+  } else {
+    if (fallback) fallback.textContent = '—— 广告位 ——';
+  }
+}, 8000);
 </script>
 
 <!-- 微信转发引导 -->
