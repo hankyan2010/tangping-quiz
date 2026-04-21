@@ -647,11 +647,19 @@ const cities=[
 ];
 
 let qi=0,sc=0,mt=null,ans=[];const URL0=location.href.split('?')[0];
+// 埋点
+var __TRACK_URL='/tpapi/track';
+var __SID=(function(){try{var s=sessionStorage.getItem('_tp_sid');if(!s){s=Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);sessionStorage.setItem('_tp_sid',s);}return s;}catch(e){return 'nosid';}})();
+function track(ev,data){try{var b={sid:__SID,ev:ev,data:data||{},ua:navigator.userAgent,ref:document.referrer};var body=JSON.stringify(b);if(navigator.sendBeacon){navigator.sendBeacon(__TRACK_URL,new Blob([body],{type:'application/json'}));}else{fetch(__TRACK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true}).catch(function(){});}}catch(e){}}
+track('open');
+var __promoLink=document.getElementById('self-promo');if(__promoLink){__promoLink.addEventListener('click',function(){track('promo_click');});}
+
 function sw(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function startQuiz(){qi=0;sc=0;ans=[];sw('quiz');rq();}
+function startQuiz(){track('start');qi=0;sc=0;ans=[];sw('quiz');rq();}
 function closePoster(){document.getElementById('posterOverlay').classList.remove('active');}
 function isWechat(){return /MicroMessenger/i.test(navigator.userAgent);}
 function showWxGuide(){
+  track('share',{wechat:isWechat()});
   if(isWechat()){
     document.getElementById('wxGuide').classList.add('active');
   }else{
@@ -677,12 +685,13 @@ function rq(){
   const b=document.getElementById('qOpts');b.innerHTML='';
   q.opts.forEach((o,oi)=>{
     const d=document.createElement('button');d.className='opt-card';d.textContent=o[0];
-    d.onclick=()=>{sc+=o[1];ans.push(oi);qi++;setTimeout(rq,130);};
+    d.onclick=()=>{track('answer',{q:qi+1,opt:oi});sc+=o[1];ans.push(oi);qi++;setTimeout(rq,130);};
     b.appendChild(d);
   });
 }
 
 function calc(){
+  track('complete',{score:sc});
   sw('loading');
   const ms=["正在偷看你的花呗账单...","你的存款余额吓到系统了...","全球32个城市正在开会研究谁来收留你...","AI算了三遍，结果一次比一次惨..."];
   let i=0;const iv=setInterval(()=>{i=(i+1)%ms.length;document.getElementById('ldMsg').textContent=ms[i];},900);
@@ -780,6 +789,7 @@ function genPoster(){
 
   // 展示结果页 + 弹出海报蒙版
   document.getElementById('posterImg').src=cv.toDataURL('image/png');
+  track('result',{result:mt && mt.n});
   sw('result');
   document.getElementById('posterOverlay').classList.add('active');
 }
