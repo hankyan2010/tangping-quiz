@@ -79,10 +79,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 .poster-close-btn{margin-top:20px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:12px 32px;font-size:15px;font-weight:700;cursor:pointer}
 .poster-close-btn:active{background:rgba(255,255,255,.25)}
 
-/* 广告位 */
+/* 顶部广告/自推位 */
 .ad-bar{position:fixed;top:0;left:0;right:0;min-height:56px;background:rgba(255,252,240,.96);backdrop-filter:blur(6px);border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;z-index:50;overflow:hidden}
 .ad-bar .ad-placeholder{color:rgba(0,0,0,.18);font-size:11px;letter-spacing:1px}
 .ad-label{position:absolute;top:3px;right:8px;font-size:9px;color:rgba(0,0,0,.15);background:rgba(0,0,0,.04);padding:1px 6px;border-radius:3px;z-index:2}
+/* iOS 自推位样式 */
+.self-promo{position:fixed;top:0;left:0;right:0;min-height:56px;z-index:51;background:linear-gradient(90deg,#E03E3E 0%,#C12525 100%);color:#fff;display:none;align-items:center;padding:8px 14px;gap:10px;box-shadow:0 2px 8px rgba(192,37,37,.3);text-decoration:none;overflow:hidden}
+.self-promo.active{display:flex}
+.self-promo .sp-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0}
+.self-promo .sp-main{flex:1;display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.self-promo .sp-main b{font-size:15px;font-weight:900;letter-spacing:.5px}
+.self-promo .sp-main em{font-size:11px;font-style:normal;color:rgba(255,255,255,.85);margin-top:2px}
+.self-promo .sp-cta{flex-shrink:0;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700}
+.self-promo:active{opacity:.85}
 
 #posterCanvas{display:none}
 
@@ -154,8 +163,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
   </div>
 </div>
 
-<!-- 广告位 -->
-<div class="ad-bar">
+<!-- 顶部自推位：蒜头外卖运营 -->
+<!-- iOS 自推位（仅 iOS 显示，其他设备走广点通） -->
+<a href="https://waimaiketang.com/" class="self-promo" id="self-promo" target="_top">
+  <img src="suantou-logo.png" class="sp-icon" alt="蒜头外卖运营">
+  <span class="sp-main">
+    <b>蒜头外卖运营</b>
+    <em>学外卖做外卖，就找正规军</em>
+  </span>
+  <span class="sp-cta">了解 →</span>
+</a>
+
+<!-- 广告位（非 iOS 走广点通） -->
+<div class="ad-bar" id="ad-bar-gdt">
   <span class="ad-label">广告</span>
   <div id="gdt-ad-container" style="width:100%;min-height:50px;display:flex;align-items:center;justify-content:center">
     <span class="ad-placeholder">广告加载中...</span>
@@ -163,46 +183,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 </div>
 
 <script>
-// SDK 只认 muid/muid_type，每浏览器本地持久一个
-var __gdt_muid = (function(){
-  try {
-    var m = localStorage.getItem('_gdt_muid');
-    if (!m) {
-      m = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 14);
-      localStorage.setItem('_gdt_muid', m);
-    }
-    return m;
-  } catch(e) { return 'w' + Date.now(); }
-})();
-
-window.TencentGDT = window.TencentGDT || [];
-var __adFallback = function(tag){
-  var p = document.querySelector('.ad-placeholder');
-  if(p) p.textContent = '—— 广告位 ——';
-  console.warn('[GDT] fallback:', tag);
-};
-var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
-TencentGDT.push({
-  app_id: '1216588626',
-  placement_id: '7279955477334718',
-  type: 'native',
-  display_type: 'banner',
-  carousel: 3000,
-  containerid: 'gdt-ad-container',
-  muid_type: '3',
-  muid: __gdt_muid,
-  onComplete: function(res){
-    clearTimeout(__adTimer);
-    console.log('[GDT] onComplete:', res);
-    if (res && (res.ret === 0 || (res.constructor === Array && res.length > 0))) {
-      var p = document.querySelector('.ad-placeholder'); if (p) p.style.display='none';
-    } else {
-      __adFallback('ret=' + (res && res.ret) + ' msg=' + (res && res.msg));
-    }
-  },
-  onError: function(e){ clearTimeout(__adTimer); __adFallback('onError ' + JSON.stringify(e||{})); }
-});
-(function(){var s=document.createElement('script');s.async=true;s.src='https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';s.onerror=function(){__adFallback('sdk load fail');};document.head.appendChild(s);})();
+// iOS 检测：iPhone/iPad/iPod → 隐藏广告位，显示自推
+var __isIOS = /iP(hone|od|ad)/i.test(navigator.userAgent) || (/Macintosh/i.test(navigator.userAgent) && 'ontouchend' in document);
+if (__isIOS) {
+  document.getElementById('self-promo').classList.add('active');
+  var gdt = document.getElementById('ad-bar-gdt'); if (gdt) gdt.style.display = 'none';
+} else {
+  // 非 iOS 才跑广点通
+  var __gdt_muid = (function(){
+    try {
+      var m = localStorage.getItem('_gdt_muid');
+      if (!m) { m = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 14); localStorage.setItem('_gdt_muid', m); }
+      return m;
+    } catch(e) { return 'w' + Date.now(); }
+  })();
+  window.TencentGDT = window.TencentGDT || [];
+  var __adFallback = function(tag){
+    var p = document.querySelector('.ad-placeholder');
+    if(p) p.textContent = '—— 广告位 ——';
+    console.warn('[GDT] fallback:', tag);
+  };
+  var __adTimer = setTimeout(function(){ __adFallback('timeout 8s'); }, 8000);
+  TencentGDT.push({
+    app_id: '1216588626',
+    placement_id: '7279955477334718',
+    type: 'native',
+    display_type: 'banner',
+    carousel: 3000,
+    containerid: 'gdt-ad-container',
+    muid_type: '3',
+    muid: __gdt_muid,
+    onComplete: function(res){
+      clearTimeout(__adTimer);
+      if (res && (res.ret === 0 || (res.constructor === Array && res.length > 0))) {
+        var p = document.querySelector('.ad-placeholder'); if (p) p.style.display='none';
+      } else {
+        __adFallback('ret=' + (res && res.ret) + ' msg=' + (res && res.msg));
+      }
+    },
+    onError: function(e){ clearTimeout(__adTimer); __adFallback('onError ' + JSON.stringify(e||{})); }
+  });
+  (function(){var s=document.createElement('script');s.async=true;s.src='https://qzs.gdtimg.com/union/res/union_sdk/page/h5_sdk/i.js';s.onerror=function(){__adFallback('sdk load fail');};document.head.appendChild(s);})();
+}
 </script>
 
 <!-- 微信转发引导 -->
