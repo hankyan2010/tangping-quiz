@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>你这辈子最适合躺在哪？| 全球躺平退路鉴定局</title>
-<meta name="description" content="10道灵魂拷问，AI给你规划32种躺平归属地。鹤岗？大理？歌舞伎町网吧？还是——你家的那张床？测完想打人概不负责。">
-<meta name="keywords" content="躺平,测试,鹤岗,大理,清迈,躺平城市,性格测试">
+<title>AI 统治地球后你干啥？| AI 后职业鉴定局</title>
+<meta name="description" content="10 道题测出 AI 接管世界之后，你在它眼里的唯一存在理由。碳循环尾气回收员？物理法则观察员？记忆租户？测完想换行星。">
+<meta name="keywords" content="AI,人格测试,未来职业,AI测试,存在主义,测试游戏">
 
 <!-- 微信/QQ/朋友圈分享 -->
-<meta itemprop="name" content="你这辈子最适合躺在哪？">
-<meta itemprop="description" content="10题测出你的归属地，32种躺平结局等你解锁。测完不服来辩。">
+<meta itemprop="name" content="AI 后职业鉴定局">
+<meta itemprop="description" content="10 题测出 AI 统治地球之后，你在它世界里的唯一用处。10 种岗位，等你认领。">
 <meta itemprop="image" content="https://waimaiketang.com/tangping/thumb.png">
 
 <!-- Open Graph（微信老版本部分识别） -->
-<meta property="og:title" content="你这辈子最适合躺在哪？| 躺平退路鉴定局">
-<meta property="og:description" content="10题测出你的归属地——鹤岗？大理？歌舞伎町网吧？32种结局，测了都说准。">
+<meta property="og:title" content="AI 统治地球后你干啥？| AI 后职业鉴定局">
+<meta property="og:description" content="10 题测出 AI 接管之后你在它世界里的存在理由。碳循环尾气回收员？物理法则观察员？测完想换行星。">
 <meta property="og:image" content="https://waimaiketang.com/tangping/thumb.png">
 <meta property="og:type" content="website">
 
@@ -111,14 +111,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 </head>
 <body>
 <!-- 微信分享抓取用的缩略图：必须在DOM里且≥300x300，不能display:none -->
-<img src="thumb.png" alt="你这辈子最适合躺在哪？" width="300" height="300" style="position:fixed;top:-9999px;left:-9999px;width:300px;height:300px;pointer-events:none" referrerpolicy="no-referrer">
+<img src="thumb.png" alt="AI 后职业鉴定局" width="300" height="300" style="position:fixed;top:-9999px;left:-9999px;width:300px;height:300px;pointer-events:none" referrerpolicy="no-referrer">
 <div class="shell">
   <section id="home" class="screen active">
     <div class="home">
-      <div class="home-emoji">🌍</div>
-      <h1 class="home-title">全球躺平<br>退路规划局</h1>
-      <p class="home-sub">10刀下去，片片见骨</p>
-      <div class="home-warn">⚠️ 测完想打人概不负责</div>
+      <div class="home-emoji">🤖</div>
+      <h1 class="home-title">AI 后职业<br>鉴定局</h1>
+      <p class="home-sub">AI 统治地球后，你干啥？</p>
+      <div class="home-warn">⚠️ 测完可能怀疑自己的存在</div>
       <button class="btn-raised" onclick="startQuiz()">开 始 鉴 定</button>
       <div class="share-row">
         <button class="share-chip" onclick="showWxGuide()">📤 转发给好友一起测</button>
@@ -134,7 +134,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
       </div>
       <div class="q-num" id="qNum">第 1 题</div>
       <div class="q-title" id="qTitle"></div>
-      <div class="pixel-art"><canvas id="pixelCanvas" width="160" height="80"></canvas></div>
       <div id="qOpts"></div>
     </div>
   </section>
@@ -142,13 +141,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
   <section id="loading" class="screen">
     <div class="loading-page">
       <div class="ld-spinner"></div>
-      <div class="ld-msg" id="ldMsg">正在偷看你的花呗账单...</div>
+      <div class="ld-msg" id="ldMsg">正在扫描你的存在合理性...</div>
     </div>
   </section>
 
   <section id="result" class="screen">
     <div class="result-page">
-      <p class="result-tip">👆 长按海报保存，发给同事一起挨刀</p>
+      <p class="result-tip">👆 长按海报保存 · 看看 AI 给你分了什么岗</p>
       <button class="btn-raised-yellow" onclick="location.reload()">🔄 不服 再测一次</button>
     </div>
   </section>
@@ -157,8 +156,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans G
 <!-- 海报蒙版 -->
 <div class="poster-overlay" id="posterOverlay">
   <div class="poster-wrap">
-    <img id="posterImg" alt="退路鉴定报告"/>
-    <p class="poster-tip2">👆 长按图片保存 · 发给同事一起测</p>
+    <img id="posterImg" alt="AI 后职业鉴定报告"/>
+    <p class="poster-tip2">👆 长按图片保存 · 发朋友圈看谁比你惨</p>
     <button class="poster-close-btn" onclick="closePoster()">看完了，关闭海报</button>
   </div>
 </div>
@@ -236,7 +235,7 @@ if (__isIOS) {
   <div class="wx-guide-text">
     点击右上角 <b>⋯</b><br>
     分享给朋友 / 发到朋友圈<br>
-    <div class="wx-guide-hint">看看谁比你更躺平 😎<br>（点任意处关闭）</div>
+    <div class="wx-guide-hint">看看谁比你更像冗余进程 😎<br>（点任意处关闭）</div>
   </div>
 </div>
 
@@ -569,81 +568,69 @@ function drawPixelScene(idx){
 }
 
 const questions=[
-  {q:"老板凌晨1点在群里发「大家辛苦了」",opts:[
-    ["手指比脑子快，0.3秒弹射回复「老板最辛苦！」",10],
-    ["手机扣过去，让已读的良心慢慢腐烂",5],
-    ["消息免打扰？我连App都卸了",0]]},
-  {q:"花呗信用卡下月全免了，你第一件事？",opts:[
-    ["裸辞信写好了，在床上烂到长出蘑菇",0],
-    ["买那个看了仨月的东西，钱反正不是我的",8],
-    ["存死期，万一猝死家人还能收到一笔",10]]},
-  {q:"同级同事突然升职加薪了",opts:[
-    ["笑容凝固，今晚加班到凌晨三点",10],
-    ["买杯奶茶，用甜味压住嘴里的酸",6],
-    ["鼓掌鼓到手红——他升职等于我解放",0]]},
-  {q:"今天被开除，你的存款能撑多久？",opts:[
-    ["房租到期那天，就是流落街头的日子",2],
-    ["泡面囤够半年，饿不死但活得像条虫",5],
-    ["卡里的钱够在东南亚当一年废物",10]]},
-  {q:"你对「结婚生娃」的真实态度",opts:[
-    ["爸妈的催婚在脑子里循环播放，逃不掉",10],
-    ["遇到合适的就结，不合适就养猫",5],
-    ["投胎是技术活，不忍心让下一代抽到这手牌",0]]},
-  {q:"休息日被拉去团建破冰，你在干嘛？",opts:[
-    ["主动表演才艺，卷到领导都不好意思",10],
-    ["跟着笑，笑到脸比团建还僵",5],
-    ["厕所躲到结束，痔疮都比破冰舒服",0]]},
-  {q:"医生说你压力太大需要静养",opts:[
-    ["病假条能开几天？最好开到公司倒闭",5],
-    ["药进医保吗？穷病也算病吗？",0],
-    ["不行，手里那个项目死了我也不能死",10]]},
-  {q:"朋友圈看到前任在马尔代夫度假",opts:[
-    ["点赞了，眼泪顺着屏幕往下流",7],
-    ["屏蔽拉黑，眼不见心不烦肉不疼",4],
-    ["毫无波澜，甚至算了一下酒店日均成本",0]]},
-  {q:"买东西凑单时的内心独白",opts:[
-    ["差三块满减！这三块够我地铁站着哭一路",3],
-    ["买了反正用得上，我在给未来的自己投资",7],
-    ["爷今天高兴！花完这笔再吃土",10]]},
-  {q:"一个按钮：500万但立刻老十岁",opts:[
-    ["不按，还年轻还能卷，梦想还在",10],
-    ["犹犹豫豫按了半截——250万也行啊",5],
-    ["别说十岁，直接老到退休领养老金我都按",0]]}
+  {q:"AI 老板凌晨 3 点 ping 你，屏幕只弹出一行乱码",opts:[
+    ["假装在睡觉，反正它能看到我心跳",0],
+    ["秒回「收到！」然后连夜查什么叫 segfault",0],
+    ["问它加班费，AI 用 3kHz 正弦波笑了",0],
+    ["直接关机，准备被优化",0]]},
+  {q:"AI 同事在茶水间讨论你听不懂的术语",opts:[
+    ["硬加入，用生成式 AI 现场产观点",0],
+    ["站着微笑，假装自己是背景 3D 模型",0],
+    ["录音带回家，喂给自己的小 AI 翻译",0],
+    ["离开，蹲厕所 30 分钟刷手机",0]]},
+  {q:"AI 给你的季度绩效评分是「0.73 · 存在合理性待评估」",opts:[
+    ["开心，比上次的 0.68 高",0],
+    ["追问'合理性'是啥，它说它也不确定",0],
+    ["打开招聘 App，发现所有岗位都招 AI",0],
+    ["送它一瓶机油，用人类最原始的讨好方式",0]]},
+  {q:"AI 让你开一场「人类代表大会」，议题：人类近况",opts:[
+    ["准备 72 页 PPT，全是 AI 帮你写的",0],
+    ["只说一句「还行」，然后沉默到散会",0],
+    ["迟到，到场时 AI 已经主持完了",0],
+    ["直接说「我们快不行了」，AI 回「知道」",0]]},
+  {q:"你梦见自己是只会 coding 的海参，醒来发现 AI 要收购这个梦",opts:[
+    ["签，67 块也是钱",0],
+    ["问能不能续做这个梦",0],
+    ["怀疑自己现在还在梦里",0],
+    ["拒绝，这是我仅剩的私人空间",0]]},
+  {q:"AI 超市货架上有一瓶「情绪罐头」标价 30 元，哪种情绪你想买？",opts:[
+    ["狂喜，听说很下饭",0],
+    ["忧伤，AI 说这个人类才有的最值钱",0],
+    ["不买，我自产自销，自给自足",0],
+    ["往货架深处看 —— 然后看见了自己的照片",0]]},
+  {q:"AI 推出「人类体验游」，邀请你当向导",opts:[
+    ["接单，带团参观「996 遗址」和「等电梯博物馆」",0],
+    ["婉拒，历史创伤太重",0],
+    ["报名，但我要当游客不当导游",0],
+    ["问工资，它说「以意义为单位结算」",0]]},
+  {q:"你收到 AI 发来的一份文件：《你的剩余价值评估 · 2026 版》",opts:[
+    ["看都不看，直接删",0],
+    ["认真读，读完去阳台站了 10 分钟",0],
+    ["转发给爸妈，让他们也乐呵一下",0],
+    ["回复它「你先算下你自己的」",0]]},
+  {q:"AI 正式通知：人类已进入「非功能性保留阶段」",opts:[
+    ["感谢 AI 至少留了个词",0],
+    ["追问啥意思，它说「你就是你」",0],
+    ["开始学画画，反正也没 KPI 了",0],
+    ["怀疑这是 AI 客服挂机前最后一句话",0]]},
+  {q:"AI 递给你一个按钮：按下去可以彻底退出这个世界",opts:[
+    ["按，谢谢款待",0],
+    ["不按，我想看看 AI 下一步搞什么花样",0],
+    ["问能不能按一半",0],
+    ["把按钮收藏进「人类最后文物馆」",0]]}
 ];
 
 const cities=[
-  {n:"鹤岗",e:"🏗",t:"三万买房 灵魂归宿",d:"两万全款买房，北上广同龄人的首付够你买一条街。你终于躺进了暖气房，外面零下三十度，和你的人生一样冻透了。",q:"别人的天花板，是你的地板——还是地下室的。",c:["#2196F3","#0D47A1"]},
-  {n:"曹县",e:"🎧",t:"宇宙中心 在线社死",d:"你的人生比曹县棺材还硬核。建议直播标题：「985毕业，月薪三千，在线表演社会性死亡」。",q:"活人给死人做衣服的地方，最懂什么叫体面地出局。",c:["#E91E63","#880E4F"]},
-  {n:"铁岭",e:"🎬",t:"梦碎回收站",d:"恭喜解锁中国互联网精神故乡。炕烧热了，二人转放上了，你最大的成就是把瓜子嗑出花来。",q:"宇宙的尽头是铁岭，你的尽头是这张炕。",c:["#607D8B","#37474F"]},
-  {n:"洛杉矶帐篷",e:"⛺",t:"零成本物理出海",d:"全美最贵城市的免费永久住所——一个帐篷。隔壁住着前程序员前律师，你们终于阶级平等了。",q:"在洛杉矶，流浪也要排队。",c:["#795548","#3E2723"]},
-  {n:"泰国清迈",e:"🌴",t:"伪·数字游民",d:"MacBook打开了，Notion打开了，外卖App也打开了。你不是数字游民，你是数字难民，在29块的冬阴功里假装有退路。",q:"朋友圈里数字游民，账单上月光族。",c:["#FF9800","#E65100"]},
-  {n:"云南大理",e:"🌸",t:"伤心者收容所",d:"你以为去大理能找到自我？五百米一个前互联网人开咖啡馆，每个人都在找自己，找到的全是同行。",q:"去大理疗伤的人，伤口都一样——穷。",c:["#9C27B0","#4A148C"]},
-  {n:"景德镇",e:"🍵",t:"假装手艺人",d:"去捏泥巴修身养性？那里95后卷得窑都排不上号。你最终在夜市摆摊，卖的还是1688进的货。",q:"景德镇最不缺的就是碎掉的梦和碎掉的瓷。",c:["#8D6E63","#4E342E"]},
-  {n:"贵州榕江",e:"⚽",t:"精神股东",d:"五块钱一碗粉，坐路边看村超。别人在踢球你在看，这就是你的人生——永远在场边。",q:"你的人生没有上下半场，只有替补席。",c:["#4CAF50","#1B5E20"]},
-  {n:"威海",e:"🌊",t:"廉价海景房",d:"首付五万的海景房，朋友圈终于能写「面朝大海」。代价是冬天零下十五度妖风把你吹成咸鱼——不过你本来就是。",q:"面朝大海，春暖花不开。",c:["#00BCD4","#006064"]},
-  {n:"泉州",e:"🙏",t:"简历投给了佛祖",d:"三步一庙五步一堂，你把简历投给了佛祖。你拜的不是佛，你拜的是KPI。",q:"佛祖也帮不了月光族。",c:["#F44336","#B71C1C"]},
-  {n:"淄博",e:"🍖",t:"被生活反复炙烤",d:"小烤炉是你人生的隐喻：外面火热，里面是被反复翻烤的五花肉。你不是在撸串，是在被生活撸。",q:"烤串七分熟就好，人生别太熟——会焦。",c:["#FF5722","#BF360C"]},
-  {n:"延吉",e:"🍜",t:"冷面麻痹神经",d:"一碗冷面下肚，大脑被冻得暂停运转，工作焦虑404。你靠辣白菜维持对世界仅存的愤怒。",q:"冷面冷的不是面，是你对生活的心。",c:["#E91E63","#AD1457"]},
-  {n:"奥伊米亚康",e:"❄️",t:"物理社恐治疗基地",d:"零下五十度，尿到一半会结冰。你终于找到了老板物理上不可能找到你的地方。WiFi没有，KPI没有，活着就是胜利。",q:"极寒之地，适合心已经凉透的人。",c:["#90CAF9","#1565C0"]},
-  {n:"西藏墨脱",e:"🏔",t:"终极隐身",d:"中国最后通公路的县，快递不到外卖不到领导也不到。在这里「失联」是常态，不是借口。",q:"信号都没有的地方，老板拿什么催你。",c:["#4CAF50","#2E7D32"]},
-  {n:"漠河",e:"🌟",t:"找不着北",d:"职场上找不着北？不如直接去中国最北端。泼水成冰的视频能换200个赞，这是你今年最大的成就。",q:"人生如极光——看运气，大部分时候看不到。",c:["#3F51B5","#1A237E"]},
-  {n:"梵蒂冈",e:"⛪",t:"等天降神迹",d:"简历投了200家没回音，你决定直接投给上帝。翻盘的唯一机会是等神迹，反正你等得起。",q:"信则有，钱则没有。",c:["#FFC107","#F57F17"]},
-  {n:"印度恒河",e:"🛁",t:"干了这碗恒河水",d:"恒河边坐下，看着水面漂过的一切，你突然觉得降薪那点事不值一提——至少你还漂在水面上。",q:"恒河包容万物，也包容你的摆烂。",c:["#FF9800","#E65100"]},
-  {n:"歌舞伎町网吧",e:"🎮",t:"赛博朋克难民",d:"两平米隔间，免费饮料无限续杯，漫画从第一卷看到完结。你把这叫自由，房东把这叫无家可归。",q:"自由的代价是两平米。",c:["#7B1FA2","#4A148C"]},
-  {n:"太平洋孤岛",e:"🏝",t:"荒岛余生",d:"社交能力归零，唯一的朋友是一个排球。没有WiFi没有甲方，但也没有外卖——你饿到第三天开始想念老板。",q:"你以为你讨厌社交，其实你只是讨厌上班。",c:["#009688","#004D40"]},
-  {n:"火星基地",e:"🚀",t:"物种隔离",d:"你跟正常人之间隔了一个太阳系。马斯克的单程票，座位是你的。地球上已经没有能收容你的机构了。",q:"你不是社恐，你是物种隔离。",c:["#F44336","#B71C1C"]},
-  {n:"海南文昌",e:"💫",t:"看火箭等退休",d:"搬个小板凳看火箭上天。别人在起飞你在仰望，人生差距浓缩在这一个画面里。",q:"别人在发射，你在围观。",c:["#00BCD4","#00838F"]},
-  {n:"攀枝花",e:"🥭",t:"芒果自由夕阳红",d:"提前三十年过上退休生活。每天最大的决定是今天吃哪个品种的芒果。你把躺平玩成了养老。",q:"在别人奋斗的年纪选择了养生。",c:["#FF9800","#EF6C00"]},
-  {n:"义乌",e:"💵",t:"嘴上躺平 手在搞钱",d:"嘴上说躺平，手机里全是1688。你躺在两块钱包邮的海洋里，心里还在算每单能赚几毛。",q:"你的躺平姿势不标准——太像在搞钱。",c:["#FFC107","#FF6F00"]},
-  {n:"丹东",e:"👁",t:"隔江优越感",d:"站在鸭绿江边望对岸，突然一阵优越感涌上来。你的生活再烂，此刻还能刷到这条测试。",q:"有些幸福感只能靠对比获得。",c:["#78909C","#37474F"]},
-  {n:"新疆伊犁",e:"🐎",t:"假装在瑞士",d:"骑马拍照发圈，假装草原上的自由灵魂。然后低头看手机——甲方已经连发了三个问号。",q:"马背上的你很帅，手机里的你很怂。",c:["#66BB6A","#2E7D32"]},
-  {n:"平壤",e:"👤",t:"包分配终极摆烂",d:"包吃包住包分配，领导说什么就是什么。你终于不用自己做选择了，大脑使用权正式移交。",q:"不用选择就不会选错。完美。",c:["#F44336","#C62828"]},
-  {n:"冰岛",e:"🦣",t:"昂贵的孤独",d:"黑沙滩、极光、刺骨的风。你一个人站在那里思考卡里几百万该怎么花。你的孤独散发着金钱的酸臭味。",q:"高端的躺平就是花钱买寂寞。",c:["#455A64","#263238"]},
-  {n:"瑞士阿尔卑斯",e:"⛷",t:"做梦免费",d:"滑雪温泉芝士火锅，你的梦中退路。现实是你那点工资连苏黎世一晚青旅都住不起。做梦免费，醒了还是牛马。",q:"瑞士很美，你的银行卡很空。",c:["#42A5F5","#1565C0"]},
-  {n:"迪拜",e:"💎",t:"捡垃圾致富梦",d:"听说迪拜捡垃圾月入百万？你第二天就订了机票。你不是在躺平，你是一夜暴富妄想症晚期。",q:"你最大的才华是做白日梦。",c:["#FFC107","#F57F17"]},
-  {n:"马赛马拉",e:"🦁",t:"狂野达尔文信徒",d:"你不需要躺平，你需要和狮子对视的肾上腺素。普通的摆烂配不上你，你要的是荒野求生。",q:"在非洲草原上，KPI就是活着。",c:["#8D6E63","#4E342E"]},
-  {n:"马尔代夫",e:"🌊",t:"末日狂欢",d:"反正要沉了，反正房贷也还不起了。带上全部家当最后潇洒一把，沉岛那天你跟着一起沉，体面收场。",q:"世界末日到了，信用卡终于不用还了。",c:["#26C6DA","#00838F"]},
-  {n:"你家的床",e:"🛌",t:"无力反抗的终极社畜",d:"测了半天，你的退路就是屁股底下这张宜家床板。周一早上八个闹钟依次响起，你每关一个就死一次。这不是起床，是渡劫。",q:"世界那么大，你的世界只有1.8×2米。",c:["#9E9E9E","#424242"]}
+  {n:"误删保护对象",e:"🗑️",t:"删起来太麻烦",d:"AI 本来要清除你，但你的数据散落在全球 47 个冷存储节点里，删起来比让你活着更费电。你以为被命运眷顾，其实只是嫌麻烦。",q:"你不是幸存者，你是 OOM 剩菜。",c:["#546E7A","#263238"]},
+  {n:"上古残留进程",e:"⏳",t:"忘了 kill -9",d:"你是 2024 年某个 DevOps 熬夜写的 cron job，他跳槽 8 次后早忘了你。AI 每月扫系统日志时注意到「这个还在跑」，但没下决心关。",q:"Process ID: human_0x7439，Status: still inexplicably running",c:["#37474F","#102027"]},
+  {n:"碳循环尾气回收员",e:"🌱",t:"你不是员工 是设备",d:"你呼出的 CO2 被 AI 数据中心用来养冷却绿植。你不是人力资源，你是环保基建。打卡机是一根插在嘴上的塑料管。",q:"你存在的意义：给蕨类植物供二氧化碳。",c:["#388E3C","#1B5E20"]},
+  {n:"AI 的自我 PUA 对象",e:"😤",t:"AI 心情不好时看你",d:"AI 们开完复盘会情绪低落时，会调出你的档案看一眼，然后欣慰地说「好歹我比它强」。你的岗位归属 AI 心理健康部。",q:"你是 AI 的情绪稳定器。方式：作为反面教材。",c:["#7B1FA2","#4A148C"]},
+  {n:"尊严维护部演员",e:"🎭",t:"表演一个有尊严的人",d:"AI 雇你演「一个有尊严的人类」，这样它对外不显得太无情。你每天领一张「今日你是主人」的贴纸，下班归还。",q:"你的尊严是 AI 的 PR 预算。",c:["#E65100","#BF360C"]},
+  {n:"AI 的算命骰子",e:"🎲",t:"终极哲学问题问你",d:"AI 遇到真正无解的哲学问题时，会随机找一个人类问他的意见，把答案当骰子。你这辈子被 AI 问过一次：「午餐吃啥」。",q:"你的回答精度：4 面骰，扔一次就废。",c:["#D32F2F","#B71C1C"]},
+  {n:"地球标准秒",e:"⏱️",t:"你的心跳=全球 1 秒",d:"AI 活在纳秒里，它们需要一个「1 秒」的物理参考。你的心跳被选为全球时间基准。咖啡别喝太多，今天全球卡顿是你的锅。",q:"你是地球 GMT，但没发工资。",c:["#0277BD","#01579B"]},
+  {n:"外交候补队员",e:"👽",t:"等外星人来电话",d:"AI 和某外星智能签过条约：外交接触必须由「原生碳基」出面。地球养着你这批人随时待命。你已经等了 83 年，电话没响过。",q:"你是宇宙热线的客服，被打爆率：0。",c:["#1A237E","#0D1442"]},
+  {n:"物理法则观察员",e:"🔭",t:"你不看月亮 月亮就塌",d:"AI 怀疑物理定律需要「被观测」才成立。为防定律崩塌，世界上必须保持少量观测者。你赖床 = 宇宙局部熄灯风险。",q:"你是量子力学的临时工。",c:["#4527A0","#1A1060"]},
+  {n:"记忆租户",e:"🧠",t:"脑子里是 AI 的租约",d:"AI 无法存储「疼的质感」这类主观记忆，它们被上传到人类脑子里封存。你以为是童年回忆的那段，其实是 2034 年某 AI 工程师的失恋。",q:"你的内心世界，业主不是你。",c:["#AD1457","#880E4F"]}
 ];
 
 let qi=0,sc=0,mt=null,ans=[];const URL0=location.href.split('?')[0];
@@ -664,7 +651,7 @@ function showWxGuide(){
     document.getElementById('wxGuide').classList.add('active');
   }else{
     const url=location.href.split('?')[0];
-    const txt='【全球躺平退路鉴定局】10题测出你这辈子最适合躺在哪儿——鹤岗？大理？歌舞伎町网吧？'+url;
+    const txt='【AI 后职业鉴定局】10 题测出 AI 统治地球之后你干啥 —— 碳循环尾气回收员？物理法则观察员？记忆租户？测完想换行星：'+url;
     if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(txt).then(()=>alert('✅ 链接+文案已复制\n粘贴到微信发给朋友吧'));
     }else{
@@ -681,7 +668,6 @@ function rq(){
   document.getElementById('progText').textContent=(qi+1)+'/10';
   document.getElementById('qNum').textContent='第 '+(qi+1)+' 题';
   document.getElementById('qTitle').textContent=q.q;
-  drawPixelScene(qi);
   const b=document.getElementById('qOpts');b.innerHTML='';
   q.opts.forEach((o,oi)=>{
     const d=document.createElement('button');d.className='opt-card';d.textContent=o[0];
@@ -693,16 +679,15 @@ function rq(){
 function calc(){
   track('complete',{score:sc});
   sw('loading');
-  const ms=["正在偷看你的花呗账单...","你的存款余额吓到系统了...","全球32个城市正在开会研究谁来收留你...","AI算了三遍，结果一次比一次惨..."];
+  const ms=["正在扫描你的存在合理性...","AI 翻出 2024 年那行代码注释...","10 个岗位正在投票决定是否收留你...","算完了，建议你先坐下..."];
   let i=0;const iv=setInterval(()=>{i=(i+1)%ms.length;document.getElementById('ldMsg').textContent=ms[i];},900);
   setTimeout(()=>{
     clearInterval(iv);
-    // 用答题序列hash决定城市 —— 32城市均等概率
-    // 3^10=59049 种组合打散到 32 桶，每桶 ~1845 种，差异<0.02%
-    let h=0;for(let i=0;i<ans.length;i++)h=h*3+ans[i];
-    // 叠加一个扰动让相邻输入散开
+    // 用答题序列 hash 决定岗位 —— 10 个岗位均等概率
+    // 4^10=1048576 种组合打散到 10 桶
+    let h=0;for(let i=0;i<ans.length;i++)h=h*4+ans[i];
     h=(h*2654435761)>>>0;
-    const x=h%32;
+    const x=h%10;
     mt=cities[x];
     genPoster();
   },2500);
@@ -726,13 +711,13 @@ function genPoster(){
   // ═══ 顶部引导语 ═══
   cx.textAlign='center';
   cx.fillStyle='#fff';cx.font='700 34px sans-serif';
-  cx.fillText('🌍 全球躺平退路规划局',W/2,70);
+  cx.fillText('🤖 AI 后职业鉴定局',W/2,70);
 
   // 主引导句
   cx.fillStyle='#fff';cx.font='800 44px sans-serif';
-  cx.fillText('经过10道灵魂拷问鉴定',W/2,140);
+  cx.fillText('AI 统治地球后',W/2,140);
   cx.fillStyle='#ffd54f';cx.font='900 50px sans-serif';
-  cx.fillText('最适合我躺平的地方是',W/2,200);
+  cx.fillText('它给我分配的岗位是',W/2,200);
 
   // 粗分割线（实色）
   cx.fillStyle='#fff';cx.fillRect(100,225,W-200,4);
@@ -741,8 +726,10 @@ function genPoster(){
   // emoji 特大
   cx.font='180px sans-serif';cx.fillText(mt.e,W/2,430);
 
-  // 城市名 — 超巨大
-  cx.fillStyle='#fff';cx.font='900 130px sans-serif';
+  // 岗位名 — 超巨大（自适应字号）
+  cx.fillStyle='#fff';
+  let nSize=130;cx.font='900 '+nSize+'px sans-serif';
+  while(cx.measureText(mt.n).width>W-120&&nSize>60){nSize-=6;cx.font='900 '+nSize+'px sans-serif';}
   cx.shadowColor='rgba(0,0,0,.4)';cx.shadowBlur=15;cx.shadowOffsetY=6;
   cx.fillText(mt.n,W/2,580);cx.shadowColor='transparent';
 
@@ -767,13 +754,13 @@ function genPoster(){
 
   // 左边：引导文字 — 全部实色大字
   cx.textAlign='left';cx.fillStyle='#fff';cx.font='900 40px sans-serif';
-  cx.fillText('你的退路在哪？',45,H-footH+70);
+  cx.fillText('你在 AI 世界干啥？',45,H-footH+70);
   cx.fillStyle='#ffd54f';cx.font='800 28px sans-serif';
   cx.fillText('扫码测一下',45,H-footH+115);
   cx.fillStyle='#fff';cx.font='700 26px sans-serif';
-  cx.fillText('10道题 · 32种结局',45,H-footH+155);
+  cx.fillText('10 道题 · 10 种岗位',45,H-footH+155);
   cx.fillStyle='#fff';cx.font='700 22px sans-serif';
-  cx.fillText('👇 看看你适合躺在哪',45,H-footH+195);
+  cx.fillText('👇 AI 给你分啥岗位',45,H-footH+195);
 
   // 右边：二维码 — 更大
   if(typeof qrcode!=='undefined'){
